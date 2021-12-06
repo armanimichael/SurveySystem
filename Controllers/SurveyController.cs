@@ -27,4 +27,15 @@ public class SurveyController : ControllerBase
     {
         return await _dbContext.Surveys.SingleOrDefaultAsync(s => s.Id == id);
     }
+
+    [HttpPost]
+    public async Task<int> Create(Survey survey)
+    {
+        if (!ModelState.IsValid) return -1;
+
+        survey.Id = 0;
+        await _dbContext.AddAsync(survey);
+        await _dbContext.SaveChangesAsync();
+        return survey.Id;
+    }
 }
