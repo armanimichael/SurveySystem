@@ -15,9 +15,15 @@ public class SurveyController : ControllerBase
         _dbContext = dbContext;
     }
 
-    [HttpGet(Name = "/")]
+    [HttpGet]
     public IEnumerable<Survey> Get()
     {
         return _dbContext.Surveys.ToList();
+    }
+    
+    [HttpGet("{id:int}")]
+    public Survey? Get(int id)
+    {
+        return _dbContext.Surveys.SingleOrDefault(s => s.Id == id);
     }
 }
