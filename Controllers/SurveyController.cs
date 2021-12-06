@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using SurveySystem.Data;
 using SurveySystem.Models;
 
@@ -16,14 +17,14 @@ public class SurveyController : ControllerBase
     }
 
     [HttpGet]
-    public IEnumerable<Survey> Get()
+    public async Task<IEnumerable<Survey>> Get()
     {
-        return _dbContext.Surveys.ToList();
+        return await _dbContext.Surveys.ToListAsync();
     }
     
     [HttpGet("{id:int}")]
-    public Survey? Get(int id)
+    public async Task<Survey?> Get(int id)
     {
-        return _dbContext.Surveys.SingleOrDefault(s => s.Id == id);
+        return await _dbContext.Surveys.SingleOrDefaultAsync(s => s.Id == id);
     }
 }
