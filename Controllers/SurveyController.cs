@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SurveySystem.Data;
 using SurveySystem.Models;
@@ -29,6 +30,7 @@ public class SurveyController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize]
     public async Task<int> Create(Survey survey)
     {
         if (!ModelState.IsValid) return -1;
@@ -40,6 +42,7 @@ public class SurveyController : ControllerBase
     }
 
     [HttpPut]
+    [Authorize]
     public async Task<int> Update(Survey survey)
     {
         Survey? dbEntry = await _dbContext.Surveys.AsNoTracking().SingleOrDefaultAsync();
