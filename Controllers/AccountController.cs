@@ -33,7 +33,7 @@ public class AccountController : ControllerBase
         bool emailExists = await _userManager.FindByEmailAsync(registrationModel.Email) != null;
         if (usernameExists || emailExists)
         {
-            return Conflict(new { message = "User already exists" });
+            return Conflict(new ApiResponse() { Message = "User already exists.", Success = false });
         }
 
         var newUser = new IdentityUser()
@@ -43,7 +43,13 @@ public class AccountController : ControllerBase
         };
         IdentityResult? result = await _userManager.CreateAsync(newUser, registrationModel.Password);
         return !result.Succeeded
-            ? StatusCode(StatusCodes.Status500InternalServerError, new { errors = result.Errors })
+            ? StatusCode(StatusCodes.Status500InternalServerError,
+                new ApiResponse()
+                {
+                    Message = "Registration error.",
+                    Success = false,
+                    Errors = result.Errors.Select(err => $"{err.Code}: {err.Description}")
+                })
             : Ok();
     }
 
@@ -52,7 +58,14 @@ public class AccountController : ControllerBase
     public async Task<IActionResult> Login([FromBody] LoginModel loginModel)
     {
         IdentityUser? user = await _userManager.FindByNameAsync(loginModel.Username);
-        if (user == null || !await _userManager.CheckPasswordAsync(user, loginModel.Password)) return Unauthorized();
+        if (user == null)
+        {
+            return Unauthorized(new ApiResponse()
+            {
+                Message = "Incorrect user or password.",
+                Success = false
+            });
+        }
 
         IList<string>? userRoles = await _userManager.GetRolesAsync(user);
         var authClaims = new List<Claim>
