@@ -18,4 +18,18 @@ public static class DefaultResponses
         Success = true,
         HttpStatusCode = (int)HttpStatusCode.OK
     };
+    
+    public static readonly ApiResponse UserLoggedInResponse = new()
+    {
+        Message = "User logged in successfully.",
+        Success = true,
+        HttpStatusCode = (int)HttpStatusCode.OK
+    };
+    
+    public static readonly ApiResponse IncorrectLoginData = new()
+    {
+        Message = "Incorrect user or password.",
+        Success = false,
+        HttpStatusCode = (int)HttpStatusCode.Unauthorized
+    };
 }
