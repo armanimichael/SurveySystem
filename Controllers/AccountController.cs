@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using SurveySystem.Models;
+using SurveySystem.services.JWTService;
 
 namespace SurveySystem.Controllers;
 
@@ -16,11 +17,13 @@ public class AccountController : ControllerBase
 {
     private readonly UserManager<IdentityUser> _userManager;
     private readonly IConfiguration _configuration;
+    private readonly IJwtService _jwtService;
 
-    public AccountController(UserManager<IdentityUser> userManager, IConfiguration configuration)
+    public AccountController(UserManager<IdentityUser> userManager, IConfiguration configuration, IJwtService jwtService)
     {
         _userManager = userManager;
         _configuration = configuration;
+        _jwtService = jwtService;
     }
 
 
@@ -64,19 +67,11 @@ public class AccountController : ControllerBase
             authClaims.Add(new Claim(ClaimTypes.Role, userRole));
         }
 
-        var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:SecretKey"]));
-        var token = new JwtSecurityToken(
-            issuer: _configuration["JWT:ValidIssuer"],
-            audience: _configuration["JWT:ValidAudience"],
-            expires: DateTime.Now.AddDays(1),
-            claims: authClaims,
-            signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
-        );
-
+        (string token, DateTime expiration) jwt = _jwtService.GenerateToken(authClaims);
         return Ok(new
         {
-            token = new JwtSecurityTokenHandler().WriteToken(token),
-            expiration = token.ValidTo
+            jwt.token,
+            jwt.expiration
         });
     }
 }
