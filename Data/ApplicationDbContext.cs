@@ -6,7 +6,7 @@ namespace SurveySystem.Data;
 
 public class ApplicationDbContext : IdentityDbContext
 {
-    public DbSet<Survey> Surveys { get; set; }
+    public DbSet<Survey> Surveys { get; set; } = null!;
     
     public ApplicationDbContext(DbContextOptions options) : base(options) { }
 }

@@ -9,6 +9,7 @@ public class Survey
 
     [Required]
     [MaxLength(100)]
-    public string Name { get; set; }
+    public string Name { get; set; } = null!;
+
     public string? Description { get; set; }
 }
