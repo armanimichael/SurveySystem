@@ -75,7 +75,7 @@ public class UserService : IUserService
     public async Task<ApiResponse> Register(UserRegistrationModel registrationModel)
     {
         string username = registrationModel.Username;
-        string? email = registrationModel.Email;
+        string email = registrationModel.Email;
         string password = registrationModel.Password;
         if (await IsUserAlreadyRegistered(username, email))
         {
