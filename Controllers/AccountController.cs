@@ -1,12 +1,7 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
 using SurveySystem.Models;
-using SurveySystem.services.JWTService;
+using SurveySystem.services.UserService;
 
 namespace SurveySystem.Controllers;
 
@@ -15,74 +10,26 @@ namespace SurveySystem.Controllers;
 [Authorize]
 public class AccountController : ControllerBase
 {
-    private readonly UserManager<IdentityUser> _userManager;
-    private readonly IJwtService _jwtService;
+    private readonly IUserService _userService;
 
-    public AccountController(UserManager<IdentityUser> userManager, IJwtService jwtService)
+    public AccountController(IUserService userService)
     {
-        _userManager = userManager;
-        _jwtService = jwtService;
+        _userService = userService;
     }
-
 
     [HttpPost("register")]
     [AllowAnonymous]
     public async Task<IActionResult> Register([FromBody] UserRegistrationModel registrationModel)
     {
-        bool usernameExists = await _userManager.FindByNameAsync(registrationModel.Username) != null;
-        bool emailExists = await _userManager.FindByEmailAsync(registrationModel.Email) != null;
-        if (usernameExists || emailExists)
-        {
-            return Conflict(new ApiResponse() { Message = "User already exists.", Success = false });
-        }
-
-        var newUser = new IdentityUser()
-        {
-            Email = registrationModel.Email,
-            UserName = registrationModel.Username
-        };
-        IdentityResult? result = await _userManager.CreateAsync(newUser, registrationModel.Password);
-        return !result.Succeeded
-            ? StatusCode(StatusCodes.Status500InternalServerError,
-                new ApiResponse()
-                {
-                    Message = "Registration error.",
-                    Success = false,
-                    Errors = result.Errors.Select(err => $"{err.Code}: {err.Description}")
-                })
-            : Ok();
+        ApiResponse registrationResponse = await _userService.Register(registrationModel);
+        return StatusCode(registrationResponse.HttpStatusCode, registrationResponse);
     }
 
     [HttpPost("login")]
     [AllowAnonymous]
     public async Task<IActionResult> Login([FromBody] UserLoginModel loginModel)
     {
-        IdentityUser? user = await _userManager.FindByNameAsync(loginModel.Username);
-        if (user == null)
-        {
-            return Unauthorized(new ApiResponse()
-            {
-                Message = "Incorrect user or password.",
-                Success = false
-            });
-        }
-
-        IList<string>? userRoles = await _userManager.GetRolesAsync(user);
-        var authClaims = new List<Claim>
-        {
-            new(ClaimTypes.Name, user.UserName),
-            new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-        };
-        foreach (var userRole in userRoles)
-        {
-            authClaims.Add(new Claim(ClaimTypes.Role, userRole));
-        }
-
-        (string token, DateTime expiration) jwt = _jwtService.GenerateToken(authClaims);
-        return Ok(new
-        {
-            jwt.token,
-            jwt.expiration
-        });
+        ApiResponse loginResponse = await _userService.Login(loginModel);
+        return StatusCode(loginResponse.HttpStatusCode, loginResponse);
     }
 }
