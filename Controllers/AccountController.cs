@@ -16,13 +16,11 @@ namespace SurveySystem.Controllers;
 public class AccountController : ControllerBase
 {
     private readonly UserManager<IdentityUser> _userManager;
-    private readonly IConfiguration _configuration;
     private readonly IJwtService _jwtService;
 
-    public AccountController(UserManager<IdentityUser> userManager, IConfiguration configuration, IJwtService jwtService)
+    public AccountController(UserManager<IdentityUser> userManager, IJwtService jwtService)
     {
         _userManager = userManager;
-        _configuration = configuration;
         _jwtService = jwtService;
     }
 
