@@ -53,7 +53,7 @@ builder.Services.AddSwaggerGen(swagger =>
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseInMemoryDatabase("SurveyDB"));
 
 // Identity
-builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+builder.Services.AddIdentity<IdentityUser, IdentityRole>(options => options.SignIn.RequireConfirmedEmail = true)
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 
