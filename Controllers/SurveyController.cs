@@ -38,4 +38,17 @@ public class SurveyController : ControllerBase
         await _dbContext.SaveChangesAsync();
         return survey.Id;
     }
+
+    [HttpPut]
+    public async Task<int> Update(Survey survey)
+    {
+        Survey? dbEntry = await _dbContext.Surveys.AsNoTracking().SingleOrDefaultAsync();
+        if (!ModelState.IsValid || dbEntry is null || survey.Id <= 0)
+        {
+            return -1;
+        }
+        
+        _dbContext.Surveys.Update(survey);
+        return await _dbContext.SaveChangesAsync();
+    }
 }
