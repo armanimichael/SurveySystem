@@ -10,12 +10,15 @@ namespace SurveySystem.services.UserService;
 public class UserService : IUserService
 {
     private readonly UserManager<IdentityUser> _userManager;
+    private readonly SignInManager<IdentityUser> _signInManager;
     private readonly IJwtService _jwtService;
 
-    public UserService(UserManager<IdentityUser> userManager, IJwtService jwtService)
+    public UserService(UserManager<IdentityUser> userManager, IJwtService jwtService,
+        SignInManager<IdentityUser> signInManager)
     {
         _userManager = userManager;
         _jwtService = jwtService;
+        _signInManager = signInManager;
     }
 
     private async Task<bool> IsUserAlreadyRegistered(string? username, string? email)
@@ -94,12 +97,15 @@ public class UserService : IUserService
         }
 
         IdentityUser user = await _userManager.FindByNameAsync(loginModel.Username);
-        bool validPassword = await _userManager.CheckPasswordAsync(user, loginModel.Password);
-        if (!validPassword)
-        {
-            return DefaultResponses.IncorrectLoginData;
-        }
         
+        // Check password and verified account
+        SignInResult result = await _signInManager.PasswordSignInAsync(user, loginModel.Password, false, false);
+        if (!result.Succeeded)
+        {
+            return result.IsNotAllowed ? DefaultResponses.UnverifiedEmail : DefaultResponses.IncorrectLoginData;
+        }
+
+        // Get JWT Token
         List<Claim> authClaims = await CreateUserClaims(user);
         return GetJwtToken(authClaims);
     }
