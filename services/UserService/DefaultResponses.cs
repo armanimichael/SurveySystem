@@ -32,4 +32,11 @@ public static class DefaultResponses
         Success = false,
         HttpStatusCode = (int)HttpStatusCode.Unauthorized
     };
+    
+    public static readonly ApiResponse UnverifiedEmail = new()
+    {
+        Message = "You must verify your account, check your email.",
+        Success = false,
+        HttpStatusCode = (int)HttpStatusCode.Unauthorized
+    };
 }
