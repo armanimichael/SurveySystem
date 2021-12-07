@@ -2,7 +2,7 @@
 
 namespace SurveySystem.Models;
 
-public class LoginModel
+public class UserLoginModel
 {
     [Required(ErrorMessage = "Username is required")]
     public string Username { get; set; } = null!;

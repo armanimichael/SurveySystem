@@ -55,7 +55,7 @@ public class AccountController : ControllerBase
 
     [HttpPost("login")]
     [AllowAnonymous]
-    public async Task<IActionResult> Login([FromBody] LoginModel loginModel)
+    public async Task<IActionResult> Login([FromBody] UserLoginModel loginModel)
     {
         IdentityUser? user = await _userManager.FindByNameAsync(loginModel.Username);
         if (user == null)
