@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using SurveySystem.Data;
 using SurveySystem.services.JWTService;
+using SurveySystem.Services.MailService;
 using SurveySystem.services.UserService;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -13,9 +14,11 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddSingleton<IJwtService, JwtSingleton>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddTransient<IMailService, MailService>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddSwaggerGen(swagger =>
 {
     swagger.SwaggerDoc("v1", new OpenApiInfo
