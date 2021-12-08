@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.JsonWebTokens;
 using SurveySystem.Models;
 using SurveySystem.services.JWTService;
+using SurveySystem.Services.MailService;
 
 namespace SurveySystem.services.UserService;
 
@@ -12,13 +13,15 @@ public class UserService : IUserService
     private readonly UserManager<IdentityUser> _userManager;
     private readonly SignInManager<IdentityUser> _signInManager;
     private readonly IJwtService _jwtService;
+    private readonly IMailService _mailService;
 
     public UserService(UserManager<IdentityUser> userManager, IJwtService jwtService,
-        SignInManager<IdentityUser> signInManager)
+        SignInManager<IdentityUser> signInManager, IMailService mailService)
     {
         _userManager = userManager;
         _jwtService = jwtService;
         _signInManager = signInManager;
+        _mailService = mailService;
     }
 
     private async Task<bool> IsUserAlreadyRegistered(string? username, string? email)
@@ -40,11 +43,30 @@ public class UserService : IUserService
         };
     }
 
+    private async Task<bool> SendConfirmationMail(IdentityUser user)
+    {
+        string confirmationToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+        try
+        {
+            _mailService.SendConfirmationToken(user.Email!, user.Id, confirmationToken);
+            return true;
+        }
+        catch (Exception)
+        {
+            return false;
+        }
+    }
+
     private async Task<ApiResponse> CreateUser(string? email, string username, string password)
     {
         var newUser = new IdentityUser() { Email = email, UserName = username };
 
         IdentityResult? result = await _userManager.CreateAsync(newUser, password);
+        if (result.Succeeded && !await SendConfirmationMail(newUser))
+        {
+            return DefaultResponses.ConfirmationEmailError;
+        }
+
         return !result.Succeeded
             ? RegistrationErrorResponse(result)
             : DefaultResponses.UserRegisteredResponse;
@@ -97,7 +119,7 @@ public class UserService : IUserService
         }
 
         IdentityUser user = await _userManager.FindByNameAsync(loginModel.Username);
-        
+
         // Check password and verified account
         SignInResult result = await _signInManager.PasswordSignInAsync(user, loginModel.Password, false, false);
         if (!result.Succeeded)
