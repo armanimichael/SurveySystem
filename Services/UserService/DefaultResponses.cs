@@ -39,4 +39,11 @@ public static class DefaultResponses
         Success = false,
         HttpStatusCode = (int)HttpStatusCode.Unauthorized
     };
+    
+    public static readonly ApiResponse ConfirmationEmailError = new()
+    {
+        Message = "There was an error while sending the confirmation email.",
+        Success = false,
+        HttpStatusCode = (int)HttpStatusCode.InternalServerError
+    };
 }
