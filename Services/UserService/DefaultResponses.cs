@@ -46,4 +46,18 @@ public static class DefaultResponses
         Success = false,
         HttpStatusCode = (int)HttpStatusCode.InternalServerError
     };
+    
+    public static readonly ApiResponse ConfirmationError = new()
+    {
+        Message = "Could not confirm user.",
+        Success = false,
+        HttpStatusCode = (int)HttpStatusCode.Unauthorized
+    };
+    
+    public static readonly ApiResponse ConfirmationSuccess = new()
+    {
+        Message = "User email confirmed successfully.",
+        Success = true,
+        HttpStatusCode = (int)HttpStatusCode.OK
+    };
 }
