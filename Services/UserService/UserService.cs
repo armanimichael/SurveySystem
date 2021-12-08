@@ -131,4 +131,18 @@ public class UserService : IUserService
         List<Claim> authClaims = await CreateUserClaims(user);
         return GetJwtToken(authClaims);
     }
+
+    public async Task<ApiResponse> VerifyEmail(string userId, string token)
+    {
+        IdentityUser? user = await _userManager.FindByIdAsync(userId);
+        if (user == null)
+        {
+            return DefaultResponses.ConfirmationError;
+        }
+
+        IdentityResult? result = await _userManager.ConfirmEmailAsync(user, token);
+        return result is { Succeeded: true }
+            ? DefaultResponses.ConfirmationSuccess
+            : DefaultResponses.ConfirmationError;
+    }
 }
