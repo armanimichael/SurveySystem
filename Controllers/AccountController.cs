@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Text;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
 using SurveySystem.Models;
 using SurveySystem.services.UserService;
 
@@ -31,5 +33,16 @@ public class AccountController : ControllerBase
     {
         ApiResponse loginResponse = await _userService.Login(loginModel);
         return StatusCode(loginResponse.HttpStatusCode, loginResponse);
+    }
+
+    [HttpGet("Verify")]
+    [AllowAnonymous]
+    public async Task<IActionResult> Verify(string userId, string token)
+    {
+        userId = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(userId));
+        token = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(token));
+
+        ApiResponse verificationResponse = await _userService.VerifyEmail(token, userId);
+        return StatusCode(verificationResponse.HttpStatusCode, verificationResponse);
     }
 }
