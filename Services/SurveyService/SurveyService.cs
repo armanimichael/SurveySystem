@@ -18,7 +18,9 @@ public class SurveyService : ISurveyService
 
     public async Task<IList<Survey>> Get()
     {
-        return await _dbContext.Surveys.ToListAsync();
+        return await _dbContext.Surveys
+            .Where(s => s.IsVisible ?? false)
+            .ToListAsync();
     }
 
     public async Task<Survey?> Get(Guid id)
