@@ -3,7 +3,6 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -27,7 +26,13 @@ builder.Services.AddControllers()
     {
         options.InvalidModelStateResponseFactory = context =>
         {
-            ModelStateDictionary.ValueEnumerable errors = context.ModelState.Values;
+            IEnumerable<string> errors =
+                context.ModelState.Values
+                    .Select(v => v.Errors.Select(err => err.ErrorMessage))
+                    .Where(v => v.Any())
+                    .SelectMany(v => v)
+                    .Distinct();
+
             var response = new ApiResponse(false, errors, (int)HttpStatusCode.BadRequest);
             return new BadRequestObjectResult(response);
         };
