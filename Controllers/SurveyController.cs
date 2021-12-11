@@ -65,12 +65,6 @@ public class SurveyController : ControllerBase
     public async Task<IActionResult> Create(SurveyDto survey)
     {
         ApiResponse response;
-        if (!ModelState.IsValid)
-        {
-            response = new ApiResponse(false, ModelState.Values, (int)HttpStatusCode.BadRequest);
-            return StatusCode(response.HttpStatusCode, response);
-        }
-
         try
         {
             var newSurvey = new Survey(survey.Name, survey.Description, survey.IsVisible);
@@ -92,7 +86,7 @@ public class SurveyController : ControllerBase
     public async Task<int> Update(Survey survey)
     {
         Survey? dbEntry = await _dbContext.Surveys.AsNoTracking().SingleOrDefaultAsync();
-        if (!ModelState.IsValid || dbEntry is null)
+        if (dbEntry is null)
         {
             return -1;
         }
