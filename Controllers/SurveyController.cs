@@ -34,7 +34,7 @@ public class SurveyController : ControllerBase
         }
         catch (Exception)
         {
-            response = DefaultReponses.Error;
+            response = DefaultReponses.GetError;
         }
 
         return StatusCode(response.HttpStatusCode, response);
@@ -54,7 +54,7 @@ public class SurveyController : ControllerBase
         }
         catch (Exception)
         {
-            response = DefaultReponses.Error;
+            response = DefaultReponses.GetError;
         }
 
         return StatusCode(response.HttpStatusCode, response);
@@ -81,7 +81,7 @@ public class SurveyController : ControllerBase
         }
         catch (Exception)
         {
-            response = DefaultReponses.Error;
+            response = DefaultReponses.GetError;
         }
         
         return StatusCode(response.HttpStatusCode, response);

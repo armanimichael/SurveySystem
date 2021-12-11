@@ -5,7 +5,7 @@ namespace SurveySystem.services.SurveyService;
 
 public class DefaultReponses
 {
-    public static readonly ApiResponse Error = new()
+    public static readonly ApiResponse GetError = new()
     {
         Message = "There was an error retriving the selected survey.",
         Success = false,
