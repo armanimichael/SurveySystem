@@ -25,4 +25,11 @@ public class DefaultReponses
         Success = true,
         HttpStatusCode = (int)HttpStatusCode.Conflict
     };
+    
+    public static readonly ApiResponse UpdateError = new()
+    {
+        Message = "There was an error updating the selected survey.",
+        Success = false,
+        HttpStatusCode = (int)HttpStatusCode.InternalServerError,
+    };
 }
