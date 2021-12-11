@@ -10,4 +10,5 @@ public class SurveyDto
     public string Name { get; set; } = null!;
 
     public string? Description { get; set; }
+    public bool? IsVisible { get; set; }
 }
