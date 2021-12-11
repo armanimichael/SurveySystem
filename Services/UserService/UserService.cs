@@ -14,14 +14,16 @@ public class UserService : IUserService
     private readonly SignInManager<IdentityUser> _signInManager;
     private readonly IJwtService _jwtService;
     private readonly IMailService _mailService;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
     public UserService(UserManager<IdentityUser> userManager, IJwtService jwtService,
-        SignInManager<IdentityUser> signInManager, IMailService mailService)
+        SignInManager<IdentityUser> signInManager, IMailService mailService, IHttpContextAccessor httpContextAccessor)
     {
         _userManager = userManager;
         _jwtService = jwtService;
         _signInManager = signInManager;
         _mailService = mailService;
+        _httpContextAccessor = httpContextAccessor;
     }
 
     private async Task<bool> IsUserAlreadyRegistered(string? username, string? email)
@@ -144,5 +146,11 @@ public class UserService : IUserService
         return result is { Succeeded: true }
             ? DefaultResponses.ConfirmationSuccess
             : DefaultResponses.ConfirmationError;
+    }
+
+    public async Task<IdentityUser> GetCurrentUser()
+    {
+        string username = _httpContextAccessor.HttpContext!.User.Identity!.Name!;
+        return await _userManager.FindByNameAsync(username);
     }
 }
