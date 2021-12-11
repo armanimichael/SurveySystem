@@ -1,15 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using SurveySystem.Dtos;
 
 namespace SurveySystem.Models;
 
-public class Survey
+public class Survey : SurveyDto
 {
     [Key]
-    public int Id { get; set; }
+    public Guid Id { get; set; }
 
-    [Required]
-    [MaxLength(100)]
-    public string Name { get; set; } = null!;
-
-    public string? Description { get; set; }
+    public string UserId { get; set; } = null!;
+    public bool IsVisible { get; set; }
 }

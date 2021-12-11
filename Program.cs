@@ -53,7 +53,8 @@ builder.Services.AddSwaggerGen(swagger =>
 });
 
 // Db context
-builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseInMemoryDatabase("SurveyDB"));
+string connectionString = builder.Configuration["DB:SqlServerConnectionString"];
+builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
 
 // Identity
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(options => options.SignIn.RequireConfirmedEmail = true)

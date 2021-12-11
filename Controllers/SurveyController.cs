@@ -2,7 +2,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SurveySystem.Data;
+using SurveySystem.Dtos;
 using SurveySystem.Models;
+using SurveySystem.services.UserService;
 
 namespace SurveySystem.Controllers;
 
@@ -11,10 +13,12 @@ namespace SurveySystem.Controllers;
 public class SurveyController : ControllerBase
 {
     private readonly ApplicationDbContext _dbContext;
+    private readonly IUserService _userService;
 
-    public SurveyController(ApplicationDbContext dbContext)
+    public SurveyController(ApplicationDbContext dbContext, IUserService userService)
     {
         _dbContext = dbContext;
+        _userService = userService;
     }
 
     [HttpGet]
@@ -22,23 +26,33 @@ public class SurveyController : ControllerBase
     {
         return await _dbContext.Surveys.ToListAsync();
     }
-    
-    [HttpGet("{id:int}")]
-    public async Task<Survey?> Get(int id)
+
+    [HttpGet("{id:guid}")]
+    public async Task<Survey?> Get(Guid id)
     {
         return await _dbContext.Surveys.SingleOrDefaultAsync(s => s.Id == id);
     }
 
     [HttpPost]
     [Authorize]
-    public async Task<int> Create(Survey survey)
+    public async Task<Guid> Create(SurveyDto survey)
     {
-        if (!ModelState.IsValid) return -1;
+        if (!ModelState.IsValid || await _dbContext.Surveys.AnyAsync(s => s.Name == survey.Name))
+        {
+            return Guid.Empty;
+        }
 
-        survey.Id = 0;
-        await _dbContext.AddAsync(survey);
+        var surveyInDb = new Survey()
+        {
+            Name = survey.Name,
+            Description = survey.Description,
+            UserId = (await _userService.GetCurrentUser()).Id
+        };
+
+        await _dbContext.AddAsync(surveyInDb);
+
         await _dbContext.SaveChangesAsync();
-        return survey.Id;
+        return surveyInDb.Id;
     }
 
     [HttpPut]
@@ -46,11 +60,11 @@ public class SurveyController : ControllerBase
     public async Task<int> Update(Survey survey)
     {
         Survey? dbEntry = await _dbContext.Surveys.AsNoTracking().SingleOrDefaultAsync();
-        if (!ModelState.IsValid || dbEntry is null || survey.Id <= 0)
+        if (!ModelState.IsValid || dbEntry is null)
         {
             return -1;
         }
-        
+
         _dbContext.Surveys.Update(survey);
         return await _dbContext.SaveChangesAsync();
     }
