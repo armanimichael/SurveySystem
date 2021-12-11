@@ -9,7 +9,7 @@ public class ApiResponse
         
     }
     
-    public ApiResponse(bool success, object metaData, int httpStatusCode)
+    public ApiResponse(bool success, object? metaData, int httpStatusCode)
     {
         Success = success;
         MetaData = metaData;
