@@ -18,14 +18,19 @@ public class SurveyService : ISurveyService
 
     public async Task<IList<Survey>> Get()
     {
+        string userId = (await _userService.GetCurrentUser())?.Id ?? "";
+
         return await _dbContext.Surveys
-            .Where(s => s.IsVisible ?? false)
+            .Where(s => userId == s.UserId || (bool)s.IsVisible!)
             .ToListAsync();
     }
 
     public async Task<Survey?> Get(Guid id)
     {
-        return await _dbContext.Surveys.SingleOrDefaultAsync(s => s.Id.Equals(id));
+        string userId = (await _userService.GetCurrentUser())?.Id ?? "";
+
+        return await _dbContext.Surveys
+            .SingleOrDefaultAsync(s => s.Id.Equals(id) && (userId == s.UserId || (bool)s.IsVisible!));
     }
 
     public async Task<Survey?> Create(Survey survey)
@@ -35,7 +40,7 @@ public class SurveyService : ISurveyService
             return null;
         }
 
-        survey.UserId = (await _userService.GetCurrentUser()).Id;
+        survey.UserId = (await _userService.GetCurrentUser())!.Id;
         await _dbContext.AddAsync(survey);
         await _dbContext.SaveChangesAsync();
         return survey;
