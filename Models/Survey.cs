@@ -17,6 +17,14 @@ public class Survey : SurveyDto
         IsVisible = isVisible;
     }
     
+    public Survey(Guid id, string name, string? description, bool? isVisible)
+    {
+        Id = id;
+        Name = name;
+        Description = description;
+        IsVisible = isVisible;
+    }
+    
     [Key]
     public Guid Id { get; set; }
 
