@@ -1,10 +1,14 @@
+using System.Net;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using SurveySystem.Data;
+using SurveySystem.Models;
 using SurveySystem.services.JWTService;
 using SurveySystem.Services.MailService;
 using SurveySystem.services.SurveyService;
@@ -17,7 +21,18 @@ builder.Services.AddSingleton<IJwtService, JwtSingleton>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddTransient<IMailService, MailService>();
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    // Custom validation error
+    .ConfigureApiBehaviorOptions(options =>
+    {
+        options.InvalidModelStateResponseFactory = context =>
+        {
+            ModelStateDictionary.ValueEnumerable errors = context.ModelState.Values;
+            var response = new ApiResponse(false, errors, (int)HttpStatusCode.BadRequest);
+            return new BadRequestObjectResult(response);
+        };
+    });
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddSwaggerGen(swagger =>
