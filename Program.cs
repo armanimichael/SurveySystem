@@ -7,6 +7,7 @@ using Microsoft.OpenApi.Models;
 using SurveySystem.Data;
 using SurveySystem.services.JWTService;
 using SurveySystem.Services.MailService;
+using SurveySystem.services.SurveyService;
 using SurveySystem.services.UserService;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -55,6 +56,9 @@ builder.Services.AddSwaggerGen(swagger =>
 // Db context
 string connectionString = builder.Configuration["DB:SqlServerConnectionString"];
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
+
+// Dals
+builder.Services.AddScoped<ISurveyService, SurveyService>();
 
 // Identity
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(options => options.SignIn.RequireConfirmedEmail = true)
