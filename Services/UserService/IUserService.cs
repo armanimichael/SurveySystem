@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-using SurveySystem.Models;
+﻿using SurveySystem.Models;
 
 namespace SurveySystem.services.UserService;
 
