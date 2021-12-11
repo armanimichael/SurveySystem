@@ -16,12 +16,10 @@ public class SurveyController : ControllerBase
 {
     private readonly ISurveyService _surveyService;
     private readonly ApplicationDbContext _dbContext;
-    private readonly IUserService _userService;
 
-    public SurveyController(ApplicationDbContext dbContext, IUserService userService, ISurveyService surveyService)
+    public SurveyController(ApplicationDbContext dbContext, ISurveyService surveyService)
     {
         _dbContext = dbContext;
-        _userService = userService;
         _surveyService = surveyService;
     }
 
@@ -65,24 +63,29 @@ public class SurveyController : ControllerBase
 
     [HttpPost]
     [Authorize]
-    public async Task<Guid> Create(SurveyDto survey)
+    public async Task<IActionResult> Create(SurveyDto survey)
     {
-        if (!ModelState.IsValid || await _dbContext.Surveys.AnyAsync(s => s.Name == survey.Name))
+        ApiResponse response;
+        if (!ModelState.IsValid)
         {
-            return Guid.Empty;
+            response = new ApiResponse(false, ModelState.Values, (int)HttpStatusCode.BadRequest);
+            return StatusCode(response.HttpStatusCode, response);
         }
 
-        var surveyInDb = new Survey()
+        try
         {
-            Name = survey.Name,
-            Description = survey.Description,
-            UserId = (await _userService.GetCurrentUser()).Id
-        };
-
-        await _dbContext.AddAsync(surveyInDb);
-
-        await _dbContext.SaveChangesAsync();
-        return surveyInDb.Id;
+            var newSurvey = new Survey(survey.Name, survey.Description, survey.IsVisible);
+            Survey? surveyInDb = await _surveyService.Create(newSurvey);
+            response = surveyInDb == null
+                ? DefaultReponses.NotUnique
+                : new ApiResponse(true, surveyInDb, (int)HttpStatusCode.Created);
+        }
+        catch (Exception)
+        {
+            response = DefaultReponses.Error;
+        }
+        
+        return StatusCode(response.HttpStatusCode, response);
     }
 
     [HttpPut]
