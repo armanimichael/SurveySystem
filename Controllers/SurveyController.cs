@@ -6,7 +6,6 @@ using SurveySystem.Data;
 using SurveySystem.Dtos;
 using SurveySystem.Models;
 using SurveySystem.services.SurveyService;
-using SurveySystem.services.UserService;
 
 namespace SurveySystem.Controllers;
 
