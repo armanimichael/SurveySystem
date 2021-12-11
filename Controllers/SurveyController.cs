@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Net;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SurveySystem.Data;
 using SurveySystem.Dtos;
 using SurveySystem.Models;
+using SurveySystem.services.SurveyService;
 using SurveySystem.services.UserService;
 
 namespace SurveySystem.Controllers;
@@ -12,25 +14,53 @@ namespace SurveySystem.Controllers;
 [Route("[controller]")]
 public class SurveyController : ControllerBase
 {
+    private readonly ISurveyService _surveyService;
     private readonly ApplicationDbContext _dbContext;
     private readonly IUserService _userService;
 
-    public SurveyController(ApplicationDbContext dbContext, IUserService userService)
+    public SurveyController(ApplicationDbContext dbContext, IUserService userService, ISurveyService surveyService)
     {
         _dbContext = dbContext;
         _userService = userService;
+        _surveyService = surveyService;
     }
 
     [HttpGet]
-    public async Task<IEnumerable<Survey>> Get()
+    public async Task<IActionResult> Get()
     {
-        return await _dbContext.Surveys.ToListAsync();
+        ApiResponse response;
+
+        try
+        {
+            IList<Survey> survey = await _surveyService.Get();
+            response = new ApiResponse(true, survey, (int)HttpStatusCode.OK);
+        }
+        catch (Exception)
+        {
+            response = DefaultReponses.Error;
+        }
+
+        return StatusCode(response.HttpStatusCode, response);
     }
 
     [HttpGet("{id:guid}")]
-    public async Task<Survey?> Get(Guid id)
+    public async Task<IActionResult> Get(Guid id)
     {
-        return await _dbContext.Surveys.SingleOrDefaultAsync(s => s.Id == id);
+        ApiResponse response;
+
+        try
+        {
+            Survey? survey = await _surveyService.Get(id);
+            response = survey == null
+                ? DefaultReponses.NotFound
+                : new ApiResponse(true, survey, (int)HttpStatusCode.OK);
+        }
+        catch (Exception)
+        {
+            response = DefaultReponses.Error;
+        }
+
+        return StatusCode(response.HttpStatusCode, response);
     }
 
     [HttpPost]
