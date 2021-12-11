@@ -1,8 +1,6 @@
 ﻿using System.Net;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using SurveySystem.Data;
 using SurveySystem.Dtos;
 using SurveySystem.Models;
 using SurveySystem.services.SurveyService;
@@ -14,11 +12,9 @@ namespace SurveySystem.Controllers;
 public class SurveyController : ControllerBase
 {
     private readonly ISurveyService _surveyService;
-    private readonly ApplicationDbContext _dbContext;
 
-    public SurveyController(ApplicationDbContext dbContext, ISurveyService surveyService)
+    public SurveyController(ISurveyService surveyService)
     {
-        _dbContext = dbContext;
         _surveyService = surveyService;
     }
 
@@ -77,21 +73,29 @@ public class SurveyController : ControllerBase
         {
             response = DefaultReponses.GetError;
         }
-        
+
         return StatusCode(response.HttpStatusCode, response);
     }
 
     [HttpPut]
     [Authorize]
-    public async Task<int> Update(Survey survey)
+    public async Task<IActionResult> Update(Guid id, SurveyDto survey)
     {
-        Survey? dbEntry = await _dbContext.Surveys.AsNoTracking().SingleOrDefaultAsync();
-        if (dbEntry is null)
+        ApiResponse response;
+        try
         {
-            return -1;
+            var newSurvey = new Survey(id, survey.Name, survey.Description, survey.IsVisible);
+            (bool updated, string? errorMessage) = await _surveyService.Update(newSurvey);
+
+            response = updated
+                ? new ApiResponse(true, null, (int)HttpStatusCode.OK)
+                : new ApiResponse(false, errorMessage, (int)HttpStatusCode.Conflict);
+        }
+        catch (Exception)
+        {
+            response = DefaultReponses.UpdateError;
         }
 
-        _dbContext.Surveys.Update(survey);
-        return await _dbContext.SaveChangesAsync();
+        return StatusCode(response.HttpStatusCode, response);
     }
 }
