@@ -148,9 +148,9 @@ public class UserService : IUserService
             : DefaultResponses.ConfirmationError;
     }
 
-    public async Task<IdentityUser> GetCurrentUser()
+    public async Task<IdentityUser?> GetCurrentUser()
     {
-        string username = _httpContextAccessor.HttpContext!.User.Identity!.Name!;
+        string username = _httpContextAccessor.HttpContext!.User.Identity?.Name ?? string.Empty;
         return await _userManager.FindByNameAsync(username);
     }
 }
