@@ -18,4 +18,11 @@ public class DefaultReponses
         Success = false,
         HttpStatusCode = (int)HttpStatusCode.NotFound
     };
+
+    public static readonly ApiResponse NotUnique = new()
+    {
+        Message = "There's another survey with this name.",
+        Success = true,
+        HttpStatusCode = (int)HttpStatusCode.Conflict
+    };
 }
