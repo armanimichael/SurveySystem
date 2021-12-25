@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.JsonWebTokens;
+using SurveySystem.ApiResponses;
 using SurveySystem.Models;
 using SurveySystem.services.JWTService;
 using SurveySystem.Services.MailService;
@@ -66,19 +67,19 @@ public class UserService : IUserService
         IdentityResult? result = await _userManager.CreateAsync(newUser, password);
         if (result.Succeeded && !await SendConfirmationMail(newUser))
         {
-            return DefaultResponses.ConfirmationEmailError;
+            return AccountApiResponses.ConfirmationEmailError;
         }
 
         return !result.Succeeded
             ? RegistrationErrorResponse(result)
-            : DefaultResponses.UserRegisteredResponse;
+            : AccountApiResponses.UserRegisteredResponse;
     }
 
     private ApiResponse GetJwtToken(IEnumerable<Claim> authClaims)
     {
         (string token, DateTime expiration) = _jwtService.GenerateToken(authClaims);
 
-        ApiResponse successResponse = DefaultResponses.UserLoggedInResponse;
+        ApiResponse successResponse = AccountApiResponses.UserLoggedInResponse;
         successResponse.MetaData = new
         {
             token,
@@ -106,7 +107,7 @@ public class UserService : IUserService
         string password = registrationModel.Password;
         if (await IsUserAlreadyRegistered(username, email))
         {
-            return DefaultResponses.UserExistsResponse;
+            return AccountApiResponses.UserExistsResponse;
         }
 
         return await CreateUser(email, username, password);
@@ -117,7 +118,7 @@ public class UserService : IUserService
         bool userExists = await IsUserAlreadyRegistered(loginModel.Username, null);
         if (!userExists)
         {
-            return DefaultResponses.IncorrectLoginData;
+            return AccountApiResponses.IncorrectLoginData;
         }
 
         IdentityUser user = await _userManager.FindByNameAsync(loginModel.Username);
@@ -126,7 +127,7 @@ public class UserService : IUserService
         SignInResult result = await _signInManager.PasswordSignInAsync(user, loginModel.Password, false, false);
         if (!result.Succeeded)
         {
-            return result.IsNotAllowed ? DefaultResponses.UnverifiedEmail : DefaultResponses.IncorrectLoginData;
+            return result.IsNotAllowed ? AccountApiResponses.UnverifiedEmail : AccountApiResponses.IncorrectLoginData;
         }
 
         // Get JWT Token
@@ -139,13 +140,13 @@ public class UserService : IUserService
         IdentityUser? user = await _userManager.FindByIdAsync(userId);
         if (user == null)
         {
-            return DefaultResponses.ConfirmationError;
+            return AccountApiResponses.ConfirmationError;
         }
 
         IdentityResult? result = await _userManager.ConfirmEmailAsync(user, token);
         return result is { Succeeded: true }
-            ? DefaultResponses.ConfirmationSuccess
-            : DefaultResponses.ConfirmationError;
+            ? AccountApiResponses.ConfirmationSuccess
+            : AccountApiResponses.ConfirmationError;
     }
 
     public async Task<string?> GetCurrentUserId()

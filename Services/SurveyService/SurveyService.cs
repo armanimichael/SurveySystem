@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using SurveySystem.ApiResponses;
 using SurveySystem.Data;
 using SurveySystem.Models;
 using SurveySystem.services.UserService;
@@ -59,7 +60,7 @@ public class SurveyService : ISurveyService
         
         // Not existing
         if (surveyInDb == null) 
-            return (false, DefaultReponses.NotFound.Message);
+            return (false, SurveyApiReponses.NotFound.Message);
         
         // No permission
         if (!await IsCurrentUserOwner(survey.UserId))
@@ -67,13 +68,13 @@ public class SurveyService : ISurveyService
 
         // Not unique
         if (!await IsUnique(survey))
-            return (false, DefaultReponses.NotUnique.Message);
+            return (false, SurveyApiReponses.NotUnique.Message);
 
         // Update
         survey.UserId = (await _userService.GetCurrentUserId())!;
         _dbContext.Surveys.Update(survey);
         bool updated = await _dbContext.SaveChangesAsync() > 0;
-        string? updateError = updated ? null : DefaultReponses.UpdateError.Message;
+        string? updateError = updated ? null : SurveyApiReponses.UpdateError.Message;
         return (updated, updateError);
     }
 

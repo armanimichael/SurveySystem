@@ -1,9 +1,9 @@
 ﻿using System.Net;
 using SurveySystem.Models;
 
-namespace SurveySystem.services.UserService;
+namespace SurveySystem.ApiResponses;
 
-public static class DefaultResponses
+public static class AccountApiResponses
 {
     public static readonly ApiResponse UserExistsResponse = new()
     {

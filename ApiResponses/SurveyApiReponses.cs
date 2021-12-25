@@ -1,9 +1,9 @@
 ﻿using System.Net;
 using SurveySystem.Models;
 
-namespace SurveySystem.services.SurveyService;
+namespace SurveySystem.ApiResponses;
 
-public class DefaultReponses
+public static class SurveyApiReponses
 {
     public static readonly ApiResponse GetError = new()
     {

@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SurveySystem.ApiResponses;
 using SurveySystem.Dtos;
 using SurveySystem.Models;
 using SurveySystem.services.SurveyService;
@@ -30,7 +31,7 @@ public class SurveyController : ControllerBase
         }
         catch (Exception)
         {
-            response = DefaultReponses.GetError;
+            response = SurveyApiReponses.GetError;
         }
 
         return StatusCode(response.HttpStatusCode, response);
@@ -45,12 +46,12 @@ public class SurveyController : ControllerBase
         {
             Survey? survey = await _surveyService.Get(id);
             response = survey == null
-                ? DefaultReponses.NotFound
+                ? SurveyApiReponses.NotFound
                 : new ApiResponse(true, survey, (int)HttpStatusCode.OK);
         }
         catch (Exception)
         {
-            response = DefaultReponses.GetError;
+            response = SurveyApiReponses.GetError;
         }
 
         return StatusCode(response.HttpStatusCode, response);
@@ -66,12 +67,12 @@ public class SurveyController : ControllerBase
             var newSurvey = new Survey(survey.Name, survey.Description, survey.IsVisible);
             Survey? surveyInDb = await _surveyService.Create(newSurvey);
             response = surveyInDb == null
-                ? DefaultReponses.NotUnique
+                ? SurveyApiReponses.NotUnique
                 : new ApiResponse(true, surveyInDb, (int)HttpStatusCode.Created);
         }
         catch (Exception)
         {
-            response = DefaultReponses.GetError;
+            response = SurveyApiReponses.GetError;
         }
 
         return StatusCode(response.HttpStatusCode, response);
@@ -93,7 +94,7 @@ public class SurveyController : ControllerBase
         }
         catch (Exception)
         {
-            response = DefaultReponses.UpdateError;
+            response = SurveyApiReponses.UpdateError;
         }
 
         return StatusCode(response.HttpStatusCode, response);
