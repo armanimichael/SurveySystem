@@ -53,29 +53,28 @@ public class SurveyService : ISurveyService
         return !await _dbContext.Surveys.AnyAsync(s => s.Name == survey.Name && survey.Id != s.Id);
     }
 
-    public async Task<(bool updated, string? errorMessage)> Update(Survey survey)
+    public async Task<ApiResponse> Update(Survey survey)
     {
         Survey? surveyInDb = await Get(survey.Id);
         survey.UserId = surveyInDb?.UserId ?? string.Empty;
-        
+
         // Not existing
-        if (surveyInDb == null) 
-            return (false, SurveyApiReponses.NotFound.Message);
-        
+        if (surveyInDb == null)
+            return SurveyApiReponses.NotFound;
+
         // No permission
         if (!await IsCurrentUserOwner(survey.UserId))
-            return (false, "You don't have the permission to update this Survey.");
+            return SurveyApiReponses.NoPermissions;
 
         // Not unique
         if (!await IsUnique(survey))
-            return (false, SurveyApiReponses.NotUnique.Message);
+            return SurveyApiReponses.NotUnique;
 
         // Update
         survey.UserId = (await _userService.GetCurrentUserId())!;
         _dbContext.Surveys.Update(survey);
         bool updated = await _dbContext.SaveChangesAsync() > 0;
-        string? updateError = updated ? null : SurveyApiReponses.UpdateError.Message;
-        return (updated, updateError);
+        return updated ? SurveyApiReponses.UpdateSuccess : SurveyApiReponses.UpdateError;
     }
 
     private async Task<bool> IsCurrentUserOwner(string surveyUserId)

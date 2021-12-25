@@ -86,11 +86,7 @@ public class SurveyController : ControllerBase
         try
         {
             var newSurvey = new Survey(id, survey.Name, survey.Description, survey.IsVisible);
-            (bool updated, string? errorMessage) = await _surveyService.Update(newSurvey);
-
-            response = updated
-                ? new ApiResponse(true, null, (int)HttpStatusCode.OK)
-                : new ApiResponse(false, errorMessage, (int)HttpStatusCode.Conflict);
+            response = await _surveyService.Update(newSurvey);
         }
         catch (Exception)
         {
