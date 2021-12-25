@@ -32,4 +32,18 @@ public static class SurveyApiReponses
         Success = false,
         HttpStatusCode = (int)HttpStatusCode.InternalServerError,
     };
+    
+    public static readonly ApiResponse UpdateSuccess = new()
+    {
+        Message = "Survey updated successfully!",
+        Success = true,
+        HttpStatusCode = (int)HttpStatusCode.OK,
+    };
+    
+    public static readonly ApiResponse NoPermissions = new()
+    {
+        Message = "You don't have the permission to update this survey.",
+        Success = false,
+        HttpStatusCode = (int)HttpStatusCode.Unauthorized,
+    };
 }
