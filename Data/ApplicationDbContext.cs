@@ -17,6 +17,17 @@ public class ApplicationDbContext : IdentityDbContext
     {
         base.OnModelCreating(builder);
         SurveysConfig(builder);
+        QuestionsConfig(builder);
+    }
+    
+    private static void QuestionsConfig(ModelBuilder builder)
+    {
+        builder.Entity<Question>(question =>
+        {
+            question
+                .HasIndex(q => new { q.Title, q.SurveyId })
+                .IsUnique();
+        });
     }
 
     private static void SurveysConfig(ModelBuilder builder)
