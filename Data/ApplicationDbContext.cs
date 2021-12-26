@@ -6,7 +6,8 @@ namespace SurveySystem.Data;
 
 public class ApplicationDbContext : IdentityDbContext
 {
-    public DbSet<Survey> Surveys { get; set; } = null!;
+    public DbSet<Survey> Surveys { get; set; }
+    public DbSet<Question> Questions { get; set; }
 
     public ApplicationDbContext(DbContextOptions options) : base(options)
     {
@@ -15,7 +16,11 @@ public class ApplicationDbContext : IdentityDbContext
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
+        SurveysConfig(builder);
+    }
 
+    private void SurveysConfig(ModelBuilder builder)
+    {
         builder.Entity<Survey>(survey =>
         {
             survey.HasIndex(s => s.Name).IsUnique(true);
