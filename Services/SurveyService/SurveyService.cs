@@ -31,6 +31,7 @@ public class SurveyService : ISurveyService
         string userId = await _userService.GetCurrentUserId() ?? "";
 
         return await _dbContext.Surveys
+            .Include(s => s.Questions)
             .AsNoTracking()
             .SingleOrDefaultAsync(s => s.Id.Equals(id) && (userId == s.UserId || (bool)s.IsVisible!));
     }
