@@ -13,10 +13,12 @@ namespace SurveySystem.Controllers;
 public class SurveyController : ControllerBase
 {
     private readonly ISurveyService _surveyService;
+    private readonly ILogger _logger;
 
-    public SurveyController(ISurveyService surveyService)
+    public SurveyController(ISurveyService surveyService, ILogger<SurveyController> logger)
     {
         _surveyService = surveyService;
+        _logger = logger;
     }
 
     [HttpGet]
@@ -29,8 +31,9 @@ public class SurveyController : ControllerBase
             IList<Survey> survey = await _surveyService.Get();
             response = new ApiResponse(true, survey, (int)HttpStatusCode.OK);
         }
-        catch (Exception)
+        catch (Exception e)
         {
+            _logger.LogError(e, "There was an error getting the Surveys");
             response = SurveyApiReponses.GetError;
         }
 
@@ -49,8 +52,9 @@ public class SurveyController : ControllerBase
                 ? SurveyApiReponses.NotFound
                 : new ApiResponse(true, survey, (int)HttpStatusCode.OK);
         }
-        catch (Exception)
+        catch (Exception e)
         {
+            _logger.LogError(e, "There was an error getting the Survey with ID = {Id}", id);
             response = SurveyApiReponses.GetError;
         }
 
@@ -70,8 +74,9 @@ public class SurveyController : ControllerBase
                 ? SurveyApiReponses.NotUnique
                 : new ApiResponse(true, surveyInDb, (int)HttpStatusCode.Created);
         }
-        catch (Exception)
+        catch (Exception e)
         {
+            _logger.LogError(e, "There was an error creating the Survey");
             response = SurveyApiReponses.GetError;
         }
 
@@ -88,8 +93,9 @@ public class SurveyController : ControllerBase
             var newSurvey = new Survey(id, survey.Name, survey.Description, survey.IsVisible);
             response = await _surveyService.Update(newSurvey);
         }
-        catch (Exception)
+        catch (Exception e)
         {
+            _logger.LogError(e, "There was an error updating the Survey width ID = {Id}", id);
             response = SurveyApiReponses.UpdateError;
         }
 
