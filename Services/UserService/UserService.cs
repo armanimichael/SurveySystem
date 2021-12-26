@@ -1,5 +1,4 @@
-﻿using System.Net;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.JsonWebTokens;
 using SurveySystem.ApiResponses;
@@ -35,17 +34,6 @@ public class UserService : IUserService
         return usernameExists || emailExists;
     }
 
-    private static ApiResponse RegistrationErrorResponse(IdentityResult result)
-    {
-        return new ApiResponse()
-        {
-            Message = "Registration error.",
-            Success = false,
-            Errors = result.Errors.Select(err => $"{err.Code}: {err.Description}"),
-            HttpStatusCode = (int)HttpStatusCode.InternalServerError
-        };
-    }
-
     private async Task<bool> SendConfirmationMail(IdentityUser user)
     {
         string confirmationToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
@@ -71,7 +59,7 @@ public class UserService : IUserService
         }
 
         return !result.Succeeded
-            ? RegistrationErrorResponse(result)
+            ? AccountApiResponses.GenerateRegistrationErrorResponse(result)
             : AccountApiResponses.UserRegisteredResponse;
     }
 
