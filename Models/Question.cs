@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace SurveySystem.Models;
 
@@ -17,5 +17,6 @@ public class Question
     [Required]
     public bool IsMultipleChoices { get; set; }
     
+    [JsonIgnore]
     public Guid SurveyId { get; set; }
 }
