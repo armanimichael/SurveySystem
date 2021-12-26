@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SurveySystem.Models;
 
@@ -15,4 +16,6 @@ public class Question
 
     [Required]
     public bool IsMultipleChoices { get; set; }
+    
+    public Guid SurveyId { get; set; }
 }
