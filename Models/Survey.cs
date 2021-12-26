@@ -29,4 +29,6 @@ public class Survey : SurveyDto
     public Guid Id { get; set; }
 
     public string UserId { get; set; } = null!;
+
+    public virtual ICollection<Question> Questions { get; } = null!;
 }
