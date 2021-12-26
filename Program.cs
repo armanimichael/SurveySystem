@@ -15,6 +15,10 @@ using SurveySystem.services.UserService;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
+// Logging
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+
 // Add services to the container.
 builder.Services.AddSingleton<IJwtService, JwtSingleton>();
 builder.Services.AddScoped<IUserService, UserService>();
