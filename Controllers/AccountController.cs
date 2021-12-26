@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
+using SurveySystem.ApiResponses;
 using SurveySystem.Models;
 using SurveySystem.services.UserService;
 
@@ -13,18 +14,28 @@ namespace SurveySystem.Controllers;
 public class AccountController : ControllerBase
 {
     private readonly IUserService _userService;
+    private readonly ILogger<AccountController> _logger;
 
-    public AccountController(IUserService userService)
+    public AccountController(IUserService userService, ILogger<AccountController> logger)
     {
         _userService = userService;
+        _logger = logger;
     }
 
     [HttpPost("register")]
     [AllowAnonymous]
     public async Task<IActionResult> Register([FromBody] UserRegistrationModel registrationModel)
     {
-        ApiResponse registrationResponse = await _userService.Register(registrationModel);
-        return StatusCode(registrationResponse.HttpStatusCode, registrationResponse);
+        try
+        {
+            ApiResponse registrationResponse = await _userService.Register(registrationModel);
+            return StatusCode(registrationResponse.HttpStatusCode, registrationResponse);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "There was an error registering the user {Username}", registrationModel.Username);
+            return StatusCode(AccountApiResponses.RegistrationError.HttpStatusCode, AccountApiResponses.RegistrationError);
+        }
     }
 
     [HttpPost("login")]
