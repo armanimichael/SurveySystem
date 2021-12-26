@@ -19,7 +19,7 @@ public class ApplicationDbContext : IdentityDbContext
         SurveysConfig(builder);
     }
 
-    private void SurveysConfig(ModelBuilder builder)
+    private static void SurveysConfig(ModelBuilder builder)
     {
         builder.Entity<Survey>(survey =>
         {
@@ -27,6 +27,12 @@ public class ApplicationDbContext : IdentityDbContext
 
             // Survey is hidden when created (the user should set it to visible)
             survey.Property(s => s.IsVisible).HasDefaultValue(false);
+
+            survey
+                .HasMany(s => s.Questions)
+                .WithOne()
+                .HasForeignKey(q => q.SurveyId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
     }
 }
