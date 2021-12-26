@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SurveySystem.ApiResponses;
 using SurveySystem.Dtos;
+using SurveySystem.Extensions;
 using SurveySystem.Models;
 using SurveySystem.services.SurveyService;
 
@@ -37,7 +38,7 @@ public class SurveyController : ControllerBase
             response = SurveyApiReponses.GetError;
         }
 
-        return StatusCode(response.HttpStatusCode, response);
+        return this.CustomApiResponse(response);
     }
 
     [HttpGet("{id:guid}")]
@@ -58,7 +59,7 @@ public class SurveyController : ControllerBase
             response = SurveyApiReponses.GetError;
         }
 
-        return StatusCode(response.HttpStatusCode, response);
+        return this.CustomApiResponse(response);
     }
 
     [HttpPost]
@@ -80,7 +81,7 @@ public class SurveyController : ControllerBase
             response = SurveyApiReponses.GetError;
         }
 
-        return StatusCode(response.HttpStatusCode, response);
+        return this.CustomApiResponse(response);
     }
 
     [HttpPut]
@@ -99,6 +100,6 @@ public class SurveyController : ControllerBase
             response = SurveyApiReponses.UpdateError;
         }
 
-        return StatusCode(response.HttpStatusCode, response);
+        return this.CustomApiResponse(response);
     }
 }

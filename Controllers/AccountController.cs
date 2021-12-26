@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.WebUtilities;
 using SurveySystem.ApiResponses;
 using SurveySystem.Models;
 using SurveySystem.services.UserService;
+using SurveySystem.Extensions;
 
 namespace SurveySystem.Controllers;
 
@@ -26,51 +27,55 @@ public class AccountController : ControllerBase
     [AllowAnonymous]
     public async Task<IActionResult> Register([FromBody] UserRegistrationModel registrationModel)
     {
+        ApiResponse response;
         try
         {
-            ApiResponse registrationResponse = await _userService.Register(registrationModel);
-            return StatusCode(registrationResponse.HttpStatusCode, registrationResponse);
+            response = await _userService.Register(registrationModel);
         }
         catch (Exception e)
         {
             _logger.LogError(e, "There was an error registering the user {Username}", registrationModel.Username);
-            return StatusCode(AccountApiResponses.RegistrationError.HttpStatusCode,
-                AccountApiResponses.RegistrationError);
+            response = AccountApiResponses.RegistrationError;
         }
+
+        return this.CustomApiResponse(response);
     }
 
     [HttpPost("login")]
     [AllowAnonymous]
     public async Task<IActionResult> Login([FromBody] UserLoginModel loginModel)
     {
+        ApiResponse response;
         try
         {
-            ApiResponse loginResponse = await _userService.Login(loginModel);
-            return StatusCode(loginResponse.HttpStatusCode, loginResponse);
+            response = await _userService.Login(loginModel);
         }
         catch (Exception e)
         {
             _logger.LogError(e, "There was an error logging the user {Username}", loginModel.Username);
-            return StatusCode(AccountApiResponses.LoginError.HttpStatusCode, AccountApiResponses.LoginError);
+            response = AccountApiResponses.LoginError;
         }
+
+        return this.CustomApiResponse(response);
     }
 
     [HttpGet("Verify")]
     [AllowAnonymous]
     public async Task<IActionResult> Verify(string userId, string token)
     {
+        ApiResponse response;
         try
         {
             userId = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(userId));
             token = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(token));
-
-            ApiResponse verificationResponse = await _userService.VerifyEmail(token, userId);
-            return StatusCode(verificationResponse.HttpStatusCode, verificationResponse);
+            response = await _userService.VerifyEmail(token, userId);
         }
         catch (Exception e)
         {
             _logger.LogError(e, "There was an error verifying the user with ID {Id}", userId);
-            return StatusCode(AccountApiResponses.RegistrationTokenVerificationError.HttpStatusCode, AccountApiResponses.RegistrationTokenVerificationError);
+            response = AccountApiResponses.RegistrationTokenVerificationError;
         }
+
+        return this.CustomApiResponse(response);
     }
 }
