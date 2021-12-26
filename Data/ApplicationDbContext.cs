@@ -41,7 +41,7 @@ public class ApplicationDbContext : IdentityDbContext
 
             survey
                 .HasMany(s => s.Questions)
-                .WithOne()
+                .WithOne(q => q.Survey)
                 .HasForeignKey(q => q.SurveyId)
                 .OnDelete(DeleteBehavior.Cascade);
         });

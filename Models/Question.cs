@@ -20,4 +20,7 @@ public class Question
     
     [JsonIgnore]
     public Guid SurveyId { get; set; }
+
+    [JsonIgnore]
+    public virtual Survey Survey { get; set; } = null!;
 }
