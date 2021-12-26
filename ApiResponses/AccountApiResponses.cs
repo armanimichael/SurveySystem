@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using Microsoft.AspNetCore.Identity;
 using SurveySystem.Models;
 
 namespace SurveySystem.ApiResponses;
@@ -60,4 +61,22 @@ public static class AccountApiResponses
         Success = true,
         HttpStatusCode = (int)HttpStatusCode.OK
     };
+
+    public static readonly ApiResponse LoginError = new()
+    {
+        Message = "There was an error loggin in the user.",
+        Success = false,
+        HttpStatusCode = (int)HttpStatusCode.InternalServerError
+    };
+    
+    public static ApiResponse GenerateRegistrationErrorResponse(IdentityResult result)
+    {
+        return new ApiResponse()
+        {
+            Message = "Registration error.",
+            Success = false,
+            Errors = result.Errors.Select(err => $"{err.Code}: {err.Description}"),
+            HttpStatusCode = (int)HttpStatusCode.InternalServerError
+        };
+    }
 }
