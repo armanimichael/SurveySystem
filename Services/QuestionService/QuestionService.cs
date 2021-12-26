@@ -1,12 +1,15 @@
-﻿using SurveySystem.Models;
+﻿using SurveySystem.Data;
+using SurveySystem.Models;
 
 namespace SurveySystem.services.QuestionService;
 
 public class QuestionService : IQuestionService
 {
-    public Task<IList<Question>> Get()
+    private readonly ApplicationDbContext _dbContext;
+
+    public QuestionService(ApplicationDbContext dbContext)
     {
-        throw new NotImplementedException();
+        _dbContext = dbContext;
     }
 
     public Task<Question?> Get(Guid id)
@@ -14,12 +17,12 @@ public class QuestionService : IQuestionService
         throw new NotImplementedException();
     }
 
-    public Task<Question?> Create(Question item)
+    public Task<Question?> Create(Question question)
     {
         throw new NotImplementedException();
     }
 
-    public Task<ApiResponse> Update(Question item)
+    public Task<ApiResponse> Update(Question question)
     {
         throw new NotImplementedException();
     }

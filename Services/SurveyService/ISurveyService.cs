@@ -2,7 +2,10 @@
 
 namespace SurveySystem.services.SurveyService;
 
-public interface ISurveyService : IGenericDal<Survey>
+public interface ISurveyService
 {
-    
+    public Task<IList<Survey>> Get();
+    public Task<Survey?> Get(Guid id);
+    public Task<Survey?> Create(Survey item);
+    public Task<ApiResponse> Update(Survey item);
 }

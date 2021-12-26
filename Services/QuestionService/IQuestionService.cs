@@ -2,7 +2,9 @@
 
 namespace SurveySystem.services.QuestionService;
 
-public interface IQuestionService : IGenericDal<Question>
+public interface IQuestionService 
 {
-    
+    public Task<Question?> Get(Guid id);
+    public Task<Question?> Create(Question question);
+    public Task<ApiResponse> Update(Question question);   
 }
