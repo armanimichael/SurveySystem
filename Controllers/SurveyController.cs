@@ -13,7 +13,7 @@ namespace SurveySystem.Controllers;
 public class SurveyController : ControllerBase
 {
     private readonly ISurveyService _surveyService;
-    private readonly ILogger _logger;
+    private readonly ILogger<SurveyController> _logger;
 
     public SurveyController(ISurveyService surveyService, ILogger<SurveyController> logger)
     {
