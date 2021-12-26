@@ -1,20 +1,28 @@
-﻿using SurveySystem.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using SurveySystem.Data;
 using SurveySystem.Models;
+using SurveySystem.services.UserService;
 
 namespace SurveySystem.services.QuestionService;
 
 public class QuestionService : IQuestionService
 {
     private readonly ApplicationDbContext _dbContext;
+    private readonly IUserService _userService;
 
-    public QuestionService(ApplicationDbContext dbContext)
+    public QuestionService(ApplicationDbContext dbContext, IUserService userService)
     {
         _dbContext = dbContext;
+        _userService = userService;
     }
 
-    public Task<Question?> Get(Guid id)
+    public async Task<Question?> Get(Guid id)
     {
-        throw new NotImplementedException();
+        string userId = await _userService.GetCurrentUserId() ?? "";
+
+        return await _dbContext.Questions
+            .Where(q => userId == q.Survey.UserId || (bool)q.Survey.IsVisible!)
+            .SingleOrDefaultAsync(q => q.Id.Equals(id));
     }
 
     public Task<Question?> Create(Question question)
