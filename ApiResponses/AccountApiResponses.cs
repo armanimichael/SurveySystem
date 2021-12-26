@@ -64,7 +64,14 @@ public static class AccountApiResponses
 
     public static readonly ApiResponse LoginError = new()
     {
-        Message = "There was an error loggin in the user.",
+        Message = "There was an error loggin the user in.",
+        Success = false,
+        HttpStatusCode = (int)HttpStatusCode.InternalServerError
+    };
+    
+    public static readonly ApiResponse RegistrationError = new()
+    {
+        Message = "There was an error registering the user.",
         Success = false,
         HttpStatusCode = (int)HttpStatusCode.InternalServerError
     };
