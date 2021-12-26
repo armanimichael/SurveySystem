@@ -10,6 +10,7 @@ using SurveySystem.Data;
 using SurveySystem.Models;
 using SurveySystem.services.JWTService;
 using SurveySystem.Services.MailService;
+using SurveySystem.services.QuestionService;
 using SurveySystem.services.SurveyService;
 using SurveySystem.services.UserService;
 
@@ -83,6 +84,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlSer
 
 // Dals
 builder.Services.AddScoped<ISurveyService, SurveyService>();
+builder.Services.AddScoped<IQuestionService, QuestionService>();
 
 // Identity
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(options => options.SignIn.RequireConfirmedEmail = true)
