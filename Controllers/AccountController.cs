@@ -42,8 +42,16 @@ public class AccountController : ControllerBase
     [AllowAnonymous]
     public async Task<IActionResult> Login([FromBody] UserLoginModel loginModel)
     {
-        ApiResponse loginResponse = await _userService.Login(loginModel);
-        return StatusCode(loginResponse.HttpStatusCode, loginResponse);
+        try
+        {
+            ApiResponse loginResponse = await _userService.Login(loginModel);
+            return StatusCode(loginResponse.HttpStatusCode, loginResponse);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "There was an error logging the user {Username}", loginModel.Username);
+            return StatusCode(AccountApiResponses.LoginError.HttpStatusCode, AccountApiResponses.LoginError);
+        }
     }
 
     [HttpGet("Verify")]
