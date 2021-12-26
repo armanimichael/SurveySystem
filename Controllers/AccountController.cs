@@ -34,7 +34,8 @@ public class AccountController : ControllerBase
         catch (Exception e)
         {
             _logger.LogError(e, "There was an error registering the user {Username}", registrationModel.Username);
-            return StatusCode(AccountApiResponses.RegistrationError.HttpStatusCode, AccountApiResponses.RegistrationError);
+            return StatusCode(AccountApiResponses.RegistrationError.HttpStatusCode,
+                AccountApiResponses.RegistrationError);
         }
     }
 
@@ -58,10 +59,18 @@ public class AccountController : ControllerBase
     [AllowAnonymous]
     public async Task<IActionResult> Verify(string userId, string token)
     {
-        userId = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(userId));
-        token = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(token));
+        try
+        {
+            userId = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(userId));
+            token = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(token));
 
-        ApiResponse verificationResponse = await _userService.VerifyEmail(token, userId);
-        return StatusCode(verificationResponse.HttpStatusCode, verificationResponse);
+            ApiResponse verificationResponse = await _userService.VerifyEmail(token, userId);
+            return StatusCode(verificationResponse.HttpStatusCode, verificationResponse);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "There was an error verifying the user with ID {Id}", userId);
+            return StatusCode(AccountApiResponses.RegistrationTokenVerificationError.HttpStatusCode, AccountApiResponses.RegistrationTokenVerificationError);
+        }
     }
 }
