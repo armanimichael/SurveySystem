@@ -34,7 +34,7 @@ public class ApplicationDbContext : IdentityDbContext
     {
         builder.Entity<Survey>(survey =>
         {
-            survey.HasIndex(s => s.Name).IsUnique(true);
+            survey.HasIndex(s => s.Name).IsUnique();
 
             // Survey is hidden when created (the user should set it to visible)
             survey.Property(s => s.IsVisible).HasDefaultValue(false);
