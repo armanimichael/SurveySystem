@@ -58,6 +58,6 @@ public static class SurveyApiReponses
     {
         Message = "You don't have the permission to edit this survey.",
         Success = false,
-        HttpStatusCode = (int)HttpStatusCode.Unauthorized,
+        HttpStatusCode = (int)HttpStatusCode.Forbidden,
     };
 }
