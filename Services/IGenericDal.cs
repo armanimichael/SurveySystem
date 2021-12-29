@@ -8,4 +8,5 @@ public interface IGenericDal<T>
     public Task<T?> Get(Guid id);
     public Task<T?> Create(T item);
     public Task<ApiResponse> Update(T item);
+    public Task<ApiResponse> Delete(Guid id);
 }

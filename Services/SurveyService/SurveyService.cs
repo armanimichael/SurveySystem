@@ -77,6 +77,23 @@ public class SurveyService : ISurveyService
         return updated ? SurveyApiReponses.UpdateSuccess : SurveyApiReponses.UpdateError;
     }
 
+    public async Task<ApiResponse> Delete(Guid id)
+    {
+        var survey = await Get(id);
+        
+        // Not existing
+        if (survey == null)
+            return SurveyApiReponses.NotFound;
+        
+        // No permission
+        if (!await IsCurrentUserOwner(survey.UserId))
+            return SurveyApiReponses.NoPermissions;
+
+        _dbContext.Surveys.Remove(survey);
+        await _dbContext.SaveChangesAsync();
+        return SurveyApiReponses.DeleteSuccess;
+    }
+
     private async Task<bool> IsCurrentUserOwner(string surveyUserId)
     {
         string userId = (await _userService.GetCurrentUserId())!;
