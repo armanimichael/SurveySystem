@@ -102,4 +102,22 @@ public class SurveyController : ControllerBase
 
         return this.CustomApiResponse(response);
     }
+
+    [HttpDelete("{id:guid}")]
+    [Authorize]
+    public async Task<IActionResult> Delete(Guid id)
+    {
+        ApiResponse response;
+        try
+        {
+            response = await _surveyService.Delete(id);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "There was an error deleting the Survey width ID = {Id}", id);
+            response = SurveyApiReponses.DeleteError;
+        }
+
+        return this.CustomApiResponse(response);
+    }
 }
