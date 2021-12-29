@@ -56,7 +56,7 @@ public static class SurveyApiReponses
     
     public static readonly ApiResponse NoPermissions = new()
     {
-        Message = "You don't have the permission to update this survey.",
+        Message = "You don't have the permission to edit this survey.",
         Success = false,
         HttpStatusCode = (int)HttpStatusCode.Unauthorized,
     };
