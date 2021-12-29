@@ -18,6 +18,13 @@ public static class SurveyApiReponses
         Success = false,
         HttpStatusCode = (int)HttpStatusCode.InternalServerError,
     };
+    
+    public static readonly ApiResponse DeleteSuccess = new()
+    {
+        Message = "Survey deleted successfully!",
+        Success = false,
+        HttpStatusCode = (int)HttpStatusCode.OK,
+    };
 
     public static readonly ApiResponse NotFound = new()
     {
