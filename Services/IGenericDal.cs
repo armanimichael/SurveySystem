@@ -1,6 +1,6 @@
 ﻿using SurveySystem.Models;
 
-namespace SurveySystem.services;
+namespace SurveySystem.Services;
 
 public interface IGenericDal<T>
 {

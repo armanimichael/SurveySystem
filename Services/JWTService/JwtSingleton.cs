@@ -3,7 +3,7 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 
-namespace SurveySystem.services.JWTService;
+namespace SurveySystem.Services.JWTService;
 
 public class JwtSingleton : IJwtService
 {

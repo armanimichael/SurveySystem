@@ -3,10 +3,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.JsonWebTokens;
 using SurveySystem.ApiResponses;
 using SurveySystem.Models;
-using SurveySystem.services.JWTService;
+using SurveySystem.Services.JWTService;
 using SurveySystem.Services.MailService;
 
-namespace SurveySystem.services.UserService;
+namespace SurveySystem.Services.UserService;
 
 public class UserService : IUserService
 {

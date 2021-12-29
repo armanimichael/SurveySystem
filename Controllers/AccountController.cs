@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using SurveySystem.ApiResponses;
 using SurveySystem.Models;
-using SurveySystem.services.UserService;
+using SurveySystem.Services.UserService;
 using SurveySystem.Extensions;
 
 namespace SurveySystem.Controllers;

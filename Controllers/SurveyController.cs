@@ -5,7 +5,7 @@ using SurveySystem.ApiResponses;
 using SurveySystem.Dtos;
 using SurveySystem.Extensions;
 using SurveySystem.Models;
-using SurveySystem.services.SurveyService;
+using SurveySystem.Services.SurveyService;
 
 namespace SurveySystem.Controllers;
 

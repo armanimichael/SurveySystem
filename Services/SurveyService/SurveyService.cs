@@ -2,9 +2,9 @@
 using SurveySystem.ApiResponses;
 using SurveySystem.Data;
 using SurveySystem.Models;
-using SurveySystem.services.UserService;
+using SurveySystem.Services.UserService;
 
-namespace SurveySystem.services.SurveyService;
+namespace SurveySystem.Services.SurveyService;
 
 public class SurveyService : ISurveyService
 {

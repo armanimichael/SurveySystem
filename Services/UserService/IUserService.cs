@@ -1,6 +1,6 @@
 ﻿using SurveySystem.Models;
 
-namespace SurveySystem.services.UserService;
+namespace SurveySystem.Services.UserService;
 
 public interface IUserService
 {

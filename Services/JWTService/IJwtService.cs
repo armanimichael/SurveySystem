@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 
-namespace SurveySystem.services.JWTService;
+namespace SurveySystem.Services.JWTService;
 
 public interface IJwtService
 {

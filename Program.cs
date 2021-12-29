@@ -8,10 +8,10 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using SurveySystem.Data;
 using SurveySystem.Models;
-using SurveySystem.services.JWTService;
+using SurveySystem.Services.JWTService;
 using SurveySystem.Services.MailService;
-using SurveySystem.services.SurveyService;
-using SurveySystem.services.UserService;
+using SurveySystem.Services.SurveyService;
+using SurveySystem.Services.UserService;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
