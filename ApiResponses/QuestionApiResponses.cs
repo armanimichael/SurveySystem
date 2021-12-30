@@ -18,4 +18,11 @@ public class QuestionApiResponses
         Success = false,
         HttpStatusCode = (int)HttpStatusCode.InternalServerError,
     };
+    
+    public static readonly ApiResponse NotUnique = new()
+    {
+        Message = "There's another question with this title.",
+        Success = true,
+        HttpStatusCode = (int)HttpStatusCode.Conflict
+    };
 }
