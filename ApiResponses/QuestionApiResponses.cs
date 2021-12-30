@@ -25,4 +25,11 @@ public class QuestionApiResponses
         Success = true,
         HttpStatusCode = (int)HttpStatusCode.Conflict
     };
+    
+    public static readonly ApiResponse NoPermission = new()
+    {
+        Message = "You don't have the permission to update this question.",
+        Success = false,
+        HttpStatusCode = (int)HttpStatusCode.Unauthorized,
+    };
 }
