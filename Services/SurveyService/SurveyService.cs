@@ -78,7 +78,7 @@ public class SurveyService : ISurveyService
         return updated ? SurveyApiReponses.UpdateSuccess : SurveyApiReponses.UpdateError;
     }
 
-    private async Task<bool> IsCurrentUserOwner(string surveyUserId)
+    public async Task<bool> IsCurrentUserOwner(string surveyUserId)
     {
         string userId = (await _userService.GetCurrentUserId())!;
         return surveyUserId == userId;
