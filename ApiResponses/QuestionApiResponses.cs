@@ -32,4 +32,11 @@ public class QuestionApiResponses
         Success = false,
         HttpStatusCode = (int)HttpStatusCode.Unauthorized,
     };
+    
+    public static readonly ApiResponse UpdateSuccess = new()
+    {
+        Message = "Question updated successfully!.",
+        Success = true,
+        HttpStatusCode = (int)HttpStatusCode.OK,
+    };
 }
