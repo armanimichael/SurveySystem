@@ -15,14 +15,12 @@ namespace SurveySystem.Controllers;
 public class QuestionController : ControllerBase
 {
     private readonly IQuestionService _questionService;
-    private readonly ISurveyService _surveyService;
     private readonly ILogger<QuestionController> _logger;
 
     public QuestionController(IQuestionService questionService, ILogger<QuestionController> logger, ISurveyService surveyService)
     {
         _questionService = questionService;
         _logger = logger;
-        _surveyService = surveyService;
     }
 
     [HttpGet]
