@@ -8,21 +8,18 @@ public class Question : QuestionDto
 {
     public Question()
     {
-        
     }
 
-    public Question(string title, string description, Guid surveyId)
+    public Question(string title, string description, Guid surveyId, bool isMultipleChoices)
     {
         Title = title;
         Description = description;
         SurveyId = surveyId;
+        IsMultipleChoices = isMultipleChoices;
     }
-    
+
     [Key]
     public Guid Id { get; set; }
-
-    [Required]
-    public bool IsMultipleChoices { get; set; }
 
     [JsonIgnore]
     public virtual Survey Survey { get; set; } = null!;

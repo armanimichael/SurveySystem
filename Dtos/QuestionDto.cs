@@ -14,4 +14,7 @@ public class QuestionDto
     
     [Required]
     public Guid SurveyId { get; set; }
+    
+    [Required]
+    public bool IsMultipleChoices { get; set; }
 }
