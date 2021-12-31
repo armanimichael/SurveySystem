@@ -39,4 +39,11 @@ public class QuestionApiResponses
         Success = true,
         HttpStatusCode = (int)HttpStatusCode.OK,
     };
+    
+    public static readonly ApiResponse UpdateError = new()
+    {
+        Message = "There was an error updating the selected question.",
+        Success = true,
+        HttpStatusCode = (int)HttpStatusCode.InternalServerError,
+    };
 }
