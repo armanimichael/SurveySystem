@@ -12,13 +12,11 @@ public class QuestionService : IQuestionService
 {
     private readonly ApplicationDbContext _dbContext;
     private readonly IUserService _userService;
-    private readonly ISurveyService _surveyService;
 
     public QuestionService(ApplicationDbContext dbContext, IUserService userService, ISurveyService surveyService)
     {
         _dbContext = dbContext;
         _userService = userService;
-        _surveyService = surveyService;
     }
 
     public async Task<Question?> Get(Guid id)
