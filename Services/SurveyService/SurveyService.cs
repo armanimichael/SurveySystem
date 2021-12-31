@@ -65,7 +65,7 @@ public class SurveyService : ISurveyService
 
         // No permission
         if (!await IsCurrentUserOwner(survey.UserId))
-            return SurveyApiReponses.NoPermission;
+            return SurveyApiReponses.NoPermissions;
 
         // Not unique
         if (!await IsUnique(survey))
