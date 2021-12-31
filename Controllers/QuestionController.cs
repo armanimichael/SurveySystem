@@ -67,7 +67,7 @@ public class QuestionController : ControllerBase
 
     private async Task<ApiResponse> TryCreateQuestion(QuestionDto question)
     {
-        var newQuestion = new Question(question.Title, question.Description, question.SurveyId, question.IsMultipleChoices);
+        var newQuestion = _questionService.DtoToModel(question);
         Question? questionInDb = await _questionService.Create(newQuestion);
         
         return questionInDb == null
@@ -82,7 +82,7 @@ public class QuestionController : ControllerBase
         ApiResponse response;
         try
         {
-            var updatedQuestion = new Question(question.Title, question.Description, question.SurveyId, question.IsMultipleChoices);
+            var updatedQuestion = _questionService.DtoToModel(question);
             updatedQuestion.Id = id;
             
             response = await _questionService.Update(updatedQuestion);

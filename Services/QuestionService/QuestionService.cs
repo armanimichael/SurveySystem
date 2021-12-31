@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SurveySystem.ApiResponses;
 using SurveySystem.Data;
+using SurveySystem.Dtos;
 using SurveySystem.Models;
 using SurveySystem.services.SurveyService;
 using SurveySystem.services.UserService;
@@ -47,7 +48,7 @@ public class QuestionService : IQuestionService
         // Not existing
         if (questionInDb == null)
             return QuestionApiResponses.NotFound;
-        
+
         // Force same Survey ID
         question.SurveyId = questionInDb.SurveyId;
 
@@ -80,4 +81,13 @@ public class QuestionService : IQuestionService
         string userId = (await _surveyService.Get(surveyId))?.UserId ?? string.Empty;
         return await _surveyService.IsCurrentUserOwner(userId);
     }
+
+    public Question DtoToModel(QuestionDto questionDto) =>
+        new()
+        {
+            Title = questionDto.Title,
+            Description = questionDto.Description,
+            SurveyId = questionDto.SurveyId,
+            IsMultipleChoices = questionDto.IsMultipleChoices
+        };
 }
