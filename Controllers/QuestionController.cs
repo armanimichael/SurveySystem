@@ -53,7 +53,7 @@ public class QuestionController : ControllerBase
         try
         {
             // No Permissions
-            if (!await IsCurrentUserOwner(question.SurveyId))
+            if (!await _questionService.IsCurrentUserOwner(question.SurveyId))
                 return this.CustomApiResponse(QuestionApiResponses.NoPermission);
 
             // Try to create
@@ -76,11 +76,5 @@ public class QuestionController : ControllerBase
         return questionInDb == null
             ? SurveyApiReponses.NotUnique
             : new ApiResponse(true, questionInDb, (int)HttpStatusCode.Created);
-    }
-
-    private async Task<bool> IsCurrentUserOwner(Guid surveyId)
-    {
-        string userId = (await _surveyService.Get(surveyId))?.UserId ?? string.Empty;
-        return await _surveyService.IsCurrentUserOwner(userId);
     }
 }

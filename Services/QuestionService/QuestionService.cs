@@ -1,7 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SurveySystem.ApiResponses;
 using SurveySystem.Data;
-using SurveySystem.Dtos;
 using SurveySystem.Models;
 using SurveySystem.services.SurveyService;
 using SurveySystem.services.UserService;
@@ -12,11 +10,13 @@ public class QuestionService : IQuestionService
 {
     private readonly ApplicationDbContext _dbContext;
     private readonly IUserService _userService;
+    private readonly ISurveyService _surveyService;
 
     public QuestionService(ApplicationDbContext dbContext, IUserService userService, ISurveyService surveyService)
     {
         _dbContext = dbContext;
         _userService = userService;
+        _surveyService = surveyService;
     }
 
     public async Task<Question?> Get(Guid id)
@@ -51,5 +51,11 @@ public class QuestionService : IQuestionService
         return await _dbContext
             .Questions
             .SingleOrDefaultAsync(q => q.SurveyId == surveyId && q.Title == title) == null;
+    }
+    
+    public async Task<bool> IsCurrentUserOwner(Guid surveyId)
+    {
+        string userId = (await _surveyService.Get(surveyId))?.UserId ?? string.Empty;
+        return await _surveyService.IsCurrentUserOwner(userId);
     }
 }
