@@ -6,18 +6,6 @@ namespace SurveySystem.Models;
 
 public class Question : QuestionDto
 {
-    public Question()
-    {
-    }
-
-    public Question(string title, string description, Guid surveyId, bool isMultipleChoices)
-    {
-        Title = title;
-        Description = description;
-        SurveyId = surveyId;
-        IsMultipleChoices = isMultipleChoices;
-    }
-
     [Key]
     public Guid Id { get; set; }
 
