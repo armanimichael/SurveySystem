@@ -68,12 +68,13 @@ public class QuestionService : IQuestionService
 
     private async Task<bool> IsUnique(Question question)
     {
+        var id = question.Id;
         var surveyId = question.SurveyId;
         var title = question.Title;
 
-        return await _dbContext
+        return !await _dbContext
             .Questions
-            .SingleOrDefaultAsync(q => q.SurveyId == surveyId && q.Title == title) == null;
+            .AnyAsync(q => q.SurveyId == surveyId && q.Title == title && q.Id != id);
     }
 
     public async Task<bool> IsCurrentUserOwner(Guid surveyId)
