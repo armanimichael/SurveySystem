@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using SurveySystem.ApiResponses;
 using SurveySystem.Data;
 using SurveySystem.Models;
 using SurveySystem.services.SurveyService;
@@ -24,6 +25,7 @@ public class QuestionService : IQuestionService
         string userId = await _userService.GetCurrentUserId() ?? "";
 
         return await _dbContext.Questions
+            .AsNoTracking()
             .Where(q => userId == q.Survey.UserId || (bool)q.Survey.IsVisible!)
             .SingleOrDefaultAsync(q => q.Id.Equals(id));
     }
@@ -38,21 +40,41 @@ public class QuestionService : IQuestionService
         return question;
     }
 
-    public Task<ApiResponse> Update(Question question)
+    public async Task<ApiResponse> Update(Question question)
     {
-        throw new NotImplementedException();
+        Question? questionInDb = await Get(question.Id);
+
+        // Not existing
+        if (questionInDb == null)
+            return QuestionApiResponses.NotFound;
+        
+        // Force same Survey ID
+        question.SurveyId = questionInDb.SurveyId;
+
+        // No permission
+        if (!await IsCurrentUserOwner(questionInDb.SurveyId))
+            return QuestionApiResponses.NoPermission;
+
+        // Not unique
+        if (!await IsUnique(question))
+            return QuestionApiResponses.NotUnique;
+
+        // Update
+        _dbContext.Questions.Update(question);
+        bool updated = await _dbContext.SaveChangesAsync() > 0;
+        return updated ? QuestionApiResponses.UpdateSuccess : QuestionApiResponses.UpdateError;
     }
 
     private async Task<bool> IsUnique(Question question)
     {
         var surveyId = question.SurveyId;
-        var title = question.Title; 
-        
+        var title = question.Title;
+
         return await _dbContext
             .Questions
             .SingleOrDefaultAsync(q => q.SurveyId == surveyId && q.Title == title) == null;
     }
-    
+
     public async Task<bool> IsCurrentUserOwner(Guid surveyId)
     {
         string userId = (await _surveyService.Get(surveyId))?.UserId ?? string.Empty;
