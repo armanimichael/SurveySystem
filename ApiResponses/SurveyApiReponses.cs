@@ -40,7 +40,7 @@ public static class SurveyApiReponses
         HttpStatusCode = (int)HttpStatusCode.OK,
     };
     
-    public static readonly ApiResponse NoPermissions = new()
+    public static readonly ApiResponse NoPermission = new()
     {
         Message = "You don't have the permission to update this survey.",
         Success = false,
