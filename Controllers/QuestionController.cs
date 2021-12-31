@@ -6,7 +6,6 @@ using SurveySystem.Dtos;
 using SurveySystem.Extensions;
 using SurveySystem.Models;
 using SurveySystem.services.QuestionService;
-using SurveySystem.services.SurveyService;
 
 namespace SurveySystem.Controllers;
 
@@ -17,7 +16,7 @@ public class QuestionController : ControllerBase
     private readonly IQuestionService _questionService;
     private readonly ILogger<QuestionController> _logger;
 
-    public QuestionController(IQuestionService questionService, ILogger<QuestionController> logger, ISurveyService surveyService)
+    public QuestionController(IQuestionService questionService, ILogger<QuestionController> logger)
     {
         _questionService = questionService;
         _logger = logger;
@@ -74,5 +73,26 @@ public class QuestionController : ControllerBase
         return questionInDb == null
             ? SurveyApiReponses.NotUnique
             : new ApiResponse(true, questionInDb, (int)HttpStatusCode.Created);
+    }
+    
+    [HttpPut]
+    [Authorize]
+    public async Task<IActionResult> Update(Guid id, QuestionDto question)
+    {
+        ApiResponse response;
+        try
+        {
+            var updatedQuestion = new Question(question.Title, question.Description, question.SurveyId, question.IsMultipleChoices);
+            updatedQuestion.Id = id;
+            
+            response = await _questionService.Update(updatedQuestion);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "There was an error updating the Question width ID = {Id}", id);
+            response = QuestionApiResponses.UpdateError;
+        }
+
+        return this.CustomApiResponse(response);
     }
 }
