@@ -25,20 +25,6 @@ public class JwtService : IJwtService
         _issuer = configuration["JWT:ValidIssuer"];
         _audience = configuration["JWT:ValidAudience"];
     }
-
-    public (string token, DateTime expiration) GenerateToken(IEnumerable<Claim> authClaims)
-    {
-        var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secretKey));
-        var token = new JwtSecurityToken(
-            issuer: _issuer,
-            audience: _audience,
-            expires: DateTime.UtcNow.AddSeconds(30),
-            claims: authClaims,
-            signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
-        );
-
-        return (new JwtSecurityTokenHandler().WriteToken(token), token.ValidTo);
-    }
     
     public async Task<AuthResult> GenerateJwtToken(IdentityUser user)
     {
