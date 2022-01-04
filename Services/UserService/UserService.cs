@@ -63,7 +63,7 @@ public class UserService : IUserService
             : AccountApiResponses.UserRegisteredResponse;
     }
 
-    private ApiResponse GetJwtToken(IEnumerable<Claim> authClaims)
+    private ApiResponse GetJwtTokenResponse(IEnumerable<Claim> authClaims)
     {
         (string token, DateTime expiration) = _jwtService.GenerateToken(authClaims);
 
@@ -120,7 +120,7 @@ public class UserService : IUserService
 
         // Get JWT Token
         List<Claim> authClaims = await CreateUserClaims(user);
-        return GetJwtToken(authClaims);
+        return GetJwtTokenResponse(authClaims);
     }
 
     public async Task<ApiResponse> VerifyEmail(string userId, string token)
