@@ -12,42 +12,31 @@ public class JwtService : IJwtService
 {
     private readonly ApplicationDbContext _dbContext;
     private readonly string _secretKey;
-    private readonly string _issuer;
-    private readonly string _audience;
-    private readonly TokenValidationParameters _tokenValidationParams;
 
 
-    public JwtService(IConfiguration configuration, TokenValidationParameters tokenValidationParams, ApplicationDbContext dbContext)
+    public JwtService(IConfiguration configuration, ApplicationDbContext dbContext)
     {
-        _tokenValidationParams = tokenValidationParams;
         _dbContext = dbContext;
         _secretKey = configuration["JWT:SecretKey"];
-        _issuer = configuration["JWT:ValidIssuer"];
-        _audience = configuration["JWT:ValidAudience"];
     }
     
     public async Task<AuthResult> GenerateJwtToken(IdentityUser user)
     {
         var jwtTokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.ASCII.GetBytes(_secretKey);
-
-        var tokenDescriptor = new SecurityTokenDescriptor
-        {
-            Subject = new ClaimsIdentity(new []
-            {
-                new Claim("Id", user.Id), 
-                new Claim(JwtRegisteredClaimNames.Email, user.Email),
-                new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-            }),
-            Expires = DateTime.UtcNow.AddSeconds(30),
-            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-        };
-
+        var tokenDescriptor = CreateTokenDescriptor(user);
+        
         var token = jwtTokenHandler.CreateToken(tokenDescriptor);
         var jwtToken = jwtTokenHandler.WriteToken(token);
+        
+        RefreshToken refreshToken = await CreateRefreshToken(user, token);
 
-        var refreshToken = new RefreshToken(){
+        return new AuthResult(jwtToken, refreshToken.Token);
+    }
+
+    private async Task<RefreshToken> CreateRefreshToken(IdentityUser user, SecurityToken token)
+    {
+        var refreshToken = new RefreshToken()
+        {
             JwtId = token.Id,
             IsUsed = false,
             UserId = user.Id,
@@ -58,7 +47,24 @@ public class JwtService : IJwtService
         };
         await _dbContext.RefreshTokens.AddAsync(refreshToken);
         await _dbContext.SaveChangesAsync();
+        return refreshToken;
+    }
 
-        return new AuthResult(jwtToken, refreshToken.Token);
+    private SecurityTokenDescriptor CreateTokenDescriptor(IdentityUser user)
+    {
+        var key = Encoding.ASCII.GetBytes(_secretKey);
+        return new SecurityTokenDescriptor
+        {
+            Subject = new ClaimsIdentity(new[]
+            {
+                new Claim("Id", user.Id),
+                new Claim(JwtRegisteredClaimNames.Email, user.Email),
+                new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+            }),
+            Expires = DateTime.UtcNow.AddSeconds(30),
+            SigningCredentials =
+                new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+        };
     }
 }
