@@ -24,7 +24,7 @@ public class JwtSingleton : IJwtService
         var token = new JwtSecurityToken(
             issuer: _issuer,
             audience: _audience,
-            expires: DateTime.Now.AddDays(1),
+            expires: DateTime.UtcNow.AddSeconds(30),
             claims: authClaims,
             signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
         );
