@@ -1,8 +1,10 @@
 ﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Identity;
+using SurveySystem.Models;
 
 namespace SurveySystem.Services.JWTService;
 
 public interface IJwtService
 {
-    public (string token, DateTime expiration) GenerateToken(IEnumerable<Claim> authClaims);
+    public Task<AuthResult> GenerateJwtToken(IdentityUser user);
 }

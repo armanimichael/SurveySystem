@@ -1,6 +1,4 @@
-﻿using System.Security.Claims;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.IdentityModel.JsonWebTokens;
+﻿using Microsoft.AspNetCore.Identity;
 using SurveySystem.ApiResponses;
 using SurveySystem.Models;
 using SurveySystem.Services.JWTService;
@@ -63,29 +61,11 @@ public class UserService : IUserService
             : AccountApiResponses.UserRegisteredResponse;
     }
 
-    private ApiResponse GetJwtTokenResponse(IEnumerable<Claim> authClaims)
+    private ApiResponse GetJwtTokenResponse(AuthResult authResult)
     {
-        (string token, DateTime expiration) = _jwtService.GenerateToken(authClaims);
-
         ApiResponse successResponse = AccountApiResponses.UserLoggedInResponse;
-        successResponse.MetaData = new
-        {
-            token,
-            expiration
-        };
+        successResponse.MetaData = authResult;
         return successResponse;
-    }
-
-    private async Task<List<Claim>> CreateUserClaims(IdentityUser user)
-    {
-        IList<string>? userRoles = await _userManager.GetRolesAsync(user);
-        var authClaims = new List<Claim>
-        {
-            new(ClaimTypes.Name, user.UserName),
-            new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-        };
-        authClaims.AddRange(userRoles.Select(userRole => new Claim(ClaimTypes.Role, userRole)));
-        return authClaims;
     }
 
     public async Task<ApiResponse> Register(UserRegistrationModel registrationModel)
@@ -119,8 +99,8 @@ public class UserService : IUserService
         }
 
         // Get JWT Token
-        List<Claim> authClaims = await CreateUserClaims(user);
-        return GetJwtTokenResponse(authClaims);
+        AuthResult authResult = await _jwtService.GenerateJwtToken(user);
+        return GetJwtTokenResponse(authResult);
     }
 
     public async Task<ApiResponse> VerifyEmail(string userId, string token)
