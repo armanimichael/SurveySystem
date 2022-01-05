@@ -1,4 +1,4 @@
-﻿namespace SurveySystem.Models;
+﻿namespace SurveySystem.Dtos;
 
 public class AuthResult
 {

@@ -4,6 +4,7 @@ using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using SurveySystem.Data;
+using SurveySystem.Dtos;
 using SurveySystem.Models;
 
 namespace SurveySystem.Services.JWTService;
@@ -12,22 +13,24 @@ public class JwtService : IJwtService
 {
     private readonly ApplicationDbContext _dbContext;
     private readonly string _secretKey;
+    private readonly TokenValidationParameters _tokenValidationParameters;
 
-
-    public JwtService(IConfiguration configuration, ApplicationDbContext dbContext)
+    public JwtService(IConfiguration configuration, ApplicationDbContext dbContext,
+        TokenValidationParameters tokenValidationParameters)
     {
         _dbContext = dbContext;
+        _tokenValidationParameters = tokenValidationParameters;
         _secretKey = configuration["JWT:SecretKey"];
     }
-    
+
     public async Task<AuthResult> GenerateJwtToken(IdentityUser user)
     {
         var jwtTokenHandler = new JwtSecurityTokenHandler();
         var tokenDescriptor = CreateTokenDescriptor(user);
-        
+
         var token = jwtTokenHandler.CreateToken(tokenDescriptor);
         var jwtToken = jwtTokenHandler.WriteToken(token);
-        
+
         RefreshToken refreshToken = await CreateRefreshToken(user, token);
 
         return new AuthResult(jwtToken, refreshToken.Token);
