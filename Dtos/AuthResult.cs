@@ -1,13 +1,5 @@
-﻿namespace SurveySystem.Dtos;
+﻿using System.Text.Json.Serialization;
 
-public class AuthResult
-{
-    public string Token {get; set;}
-    public string RefreshToken {get; set;}
+namespace SurveySystem.Dtos;
 
-    public AuthResult(string token, string refreshToken)
-    {
-        Token = token;
-        RefreshToken = refreshToken;
-    }
-}
+public record AuthResult(string Token, [property: JsonIgnore] string RefreshToken);
