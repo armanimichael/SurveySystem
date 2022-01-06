@@ -1,5 +1,7 @@
-﻿using System.Text;
+﻿using System.Net;
+using System.Text;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using SurveySystem.ApiResponses;
@@ -109,5 +111,28 @@ public class AccountController : ControllerBase
 
         AuthResult newToken = await _jwtService.GenerateJwtToken(refreshTokenInDb.User);
         return Ok(newToken);
+    }
+
+    [HttpGet("UserInfo")]
+    [Authorize]
+    public async Task<IActionResult> UserInfo()
+    {
+        ApiResponse response;
+        try
+        {
+            IdentityUser user = await _userService.GetCurrentUser() ?? throw new NullReferenceException();
+            
+            var userInfo = new UserInfo(user.UserName, user.Email);
+            response = new ApiResponse(true, userInfo, (int)HttpStatusCode.OK);
+        }
+        catch (Exception e)
+        {
+            const string errMsg = "There was an error retriving the user informations";
+            _logger.LogError(e, errMsg);
+            response = new ApiResponse(false, null, (int)HttpStatusCode.InternalServerError);
+            response.Message = errMsg;
+        }
+
+        return this.CustomApiResponse(response);
     }
 }
