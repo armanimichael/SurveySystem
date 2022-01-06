@@ -1,5 +1,6 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
@@ -31,26 +32,30 @@ public class JwtService : IJwtService
         var token = jwtTokenHandler.CreateToken(tokenDescriptor);
         var jwtToken = jwtTokenHandler.WriteToken(token);
 
-        RefreshToken refreshToken = await CreateRefreshToken(user, token);
+        RefreshToken refreshToken = await CreateRefreshToken();
 
         return new AuthResult(jwtToken, refreshToken.Token, refreshToken.ExpiryDate);
     }
 
-    private async Task<RefreshToken> CreateRefreshToken(IdentityUser user, SecurityToken token)
+    private async Task<RefreshToken> CreateRefreshToken()
     {
         var refreshToken = new RefreshToken()
         {
-            JwtId = token.Id,
-            IsUsed = false,
-            UserId = user.Id,
-            AddedDate = DateTime.UtcNow,
             ExpiryDate = DateTime.UtcNow.AddYears(1),
-            IsRevoked = false,
-            Token = Guid.NewGuid().ToString()
+            Token = CreateRandomBase64Token()
         };
         await _dbContext.RefreshTokens.AddAsync(refreshToken);
         await _dbContext.SaveChangesAsync();
         return refreshToken;
+    }
+
+    private static string CreateRandomBase64Token()
+    {
+        var randomToken = RandomNumberGenerator.Create();
+        var randomBytes = new byte[256];
+        randomToken.GetNonZeroBytes(randomBytes);
+        string token = Convert.ToBase64String(randomBytes);
+        return token;
     }
 
     private SecurityTokenDescriptor CreateTokenDescriptor(IdentityUser user)
