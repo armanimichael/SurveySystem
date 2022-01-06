@@ -7,6 +7,7 @@ using SurveySystem.Dtos;
 using SurveySystem.Models;
 using SurveySystem.Services.UserService;
 using SurveySystem.Extensions;
+using SurveySystem.Services.JWTService;
 
 namespace SurveySystem.Controllers;
 
@@ -16,12 +17,14 @@ namespace SurveySystem.Controllers;
 public class AccountController : ControllerBase
 {
     private readonly IUserService _userService;
+    private readonly IJwtService _jwtService;
     private readonly ILogger<AccountController> _logger;
 
-    public AccountController(IUserService userService, ILogger<AccountController> logger)
+    public AccountController(IUserService userService, ILogger<AccountController> logger, IJwtService jwtService)
     {
         _userService = userService;
         _logger = logger;
+        _jwtService = jwtService;
     }
 
     [HttpPost("register")]
@@ -53,7 +56,7 @@ public class AccountController : ControllerBase
 
             if (response.Success)
             {
-                CreateRefreshTokenCookie(response);
+                CreateRefreshTokenCookie((AuthResult)response.MetaData);
             }
         }
         catch (Exception e)
@@ -65,9 +68,9 @@ public class AccountController : ControllerBase
         return this.CustomApiResponse(response);
     }
 
-    private void CreateRefreshTokenCookie(ApiResponse response)
+    private void CreateRefreshTokenCookie(AuthResult authResult)
     {
-        var (_, refreshToken, expire) = (AuthResult)response.MetaData;
+        var (_, refreshToken, expire) = authResult;
         Response.Cookies.Append("refreshToken", refreshToken, new CookieOptions()
         {
             Expires = expire
@@ -92,5 +95,19 @@ public class AccountController : ControllerBase
         }
 
         return this.CustomApiResponse(response);
+    }
+
+    [HttpGet("RefreshToken")]
+    [AllowAnonymous]
+    public async Task<IActionResult> RefreshToken()
+    {
+        string? refreshToken = Request.Cookies.SingleOrDefault(c => c.Key == "refreshTokend").Value;
+        if (refreshToken == null) return Unauthorized();
+
+        RefreshToken? refreshTokenInDb = await _jwtService.GetRefreshToken(refreshToken);
+        if (refreshTokenInDb == null) return Unauthorized();
+
+        AuthResult newToken = await _jwtService.GenerateJwtToken(refreshTokenInDb.User);
+        return Ok(newToken);
     }
 }
