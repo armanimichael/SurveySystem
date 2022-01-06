@@ -18,21 +18,33 @@ public class JwtService : IJwtService
     private readonly string _secretKey;
     private readonly string _issuer;
     private readonly string _audience;
-    
+    private readonly IConfiguration _configuration;
+
 
     public JwtService(IConfiguration configuration, ApplicationDbContext dbContext, UserManager<IdentityUser> userManager)
     {
         _dbContext = dbContext;
         _userManager = userManager;
+        _configuration = configuration;
         _secretKey = configuration["JWT:SecretKey"];
         _issuer = configuration["JWT:ValidIssuer"];
         _audience = configuration["JWT:ValidAudience"];
     }
 
+    private TimeSpan GetTokenLifespan(TokenType type)
+    {
+        string tokenType = type == TokenType.Jwt ? "TokenLifespan" : "RefreshTokenLifespan";
+        int days = _configuration.GetValue<int>($"JWT:{tokenType}:Days");
+        int hours = _configuration.GetValue<int>($"JWT:{tokenType}:Hours");
+        int minutes = _configuration.GetValue<int>($"JWT:{tokenType}:Minutes");
+
+        return new TimeSpan(days, hours, minutes, 0);
+    }
+
     public async Task<AuthResult> GenerateJwtToken(IdentityUser user)
     {
         var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secretKey));
-        var expire = DateTime.UtcNow.AddDays(1);
+        var expire = DateTime.UtcNow.Add(GetTokenLifespan(TokenType.Jwt));
         
         var token = new JwtSecurityToken(
             issuer: _issuer,
@@ -51,7 +63,7 @@ public class JwtService : IJwtService
     {
         var refreshToken = new RefreshToken()
         {
-            ExpiryDate = DateTime.UtcNow.AddYears(1),
+            ExpiryDate = DateTime.UtcNow.Add(GetTokenLifespan(TokenType.Refresh)),
             Token = CreateRandomBase64Token(),
             UserId = userId
         };
