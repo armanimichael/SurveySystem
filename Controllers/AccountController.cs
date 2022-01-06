@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using SurveySystem.ApiResponses;
+using SurveySystem.Dtos;
 using SurveySystem.Models;
 using SurveySystem.Services.UserService;
 using SurveySystem.Extensions;
@@ -49,6 +50,11 @@ public class AccountController : ControllerBase
         try
         {
             response = await _userService.Login(loginModel);
+
+            if (response.Success)
+            {
+                CreateRefreshTokenCookie(response);
+            }
         }
         catch (Exception e)
         {
@@ -57,6 +63,15 @@ public class AccountController : ControllerBase
         }
 
         return this.CustomApiResponse(response);
+    }
+
+    private void CreateRefreshTokenCookie(ApiResponse response)
+    {
+        var (_, refreshToken, expire) = (AuthResult)response.MetaData;
+        Response.Cookies.Append("refreshToken", refreshToken, new CookieOptions()
+        {
+            Expires = expire
+        });
     }
 
     [HttpGet("Verify")]
