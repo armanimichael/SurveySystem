@@ -8,14 +8,10 @@ public class RefreshToken
 {
     [Key]
     public string Token { get; set; } = null!;
-
-    public string JwtId { get; set; } = null!;
-    public bool IsUsed { get; set; }
-    public bool IsRevoked { get; set; }
-    public DateTime AddedDate { get; set; }
+    
     public DateTime ExpiryDate { get; set; }
-
-    [ForeignKey(nameof(UserId))]
-    public IdentityUser User {get;set;} = null!;
     public string UserId { get; set; } = null!;
+    
+    [ForeignKey(nameof(UserId))]
+    public IdentityUser User { get; set; }
 }

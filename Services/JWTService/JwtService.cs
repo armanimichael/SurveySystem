@@ -29,17 +29,18 @@ public class JwtService : IJwtService
         var token = jwtTokenHandler.CreateToken(tokenDescriptor);
         var jwtToken = jwtTokenHandler.WriteToken(token);
 
-        RefreshToken refreshToken = await CreateRefreshToken();
+        RefreshToken refreshToken = await CreateRefreshToken(user.Id);
 
         return new AuthResult(jwtToken, refreshToken.Token, refreshToken.ExpiryDate);
     }
 
-    private async Task<RefreshToken> CreateRefreshToken()
+    private async Task<RefreshToken> CreateRefreshToken(string userId)
     {
         var refreshToken = new RefreshToken()
         {
             ExpiryDate = DateTime.UtcNow.AddYears(1),
-            Token = CreateRandomBase64Token()
+            Token = CreateRandomBase64Token(),
+            UserId = userId
         };
         await _dbContext.RefreshTokens.AddAsync(refreshToken);
         await _dbContext.SaveChangesAsync();
