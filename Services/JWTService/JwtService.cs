@@ -73,4 +73,9 @@ public class JwtService : IJwtService
                 new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
         };
     }
+
+    public async Task<RefreshToken?> GetRefreshToken(string refreshTokenKey) =>
+        _dbContext.RefreshTokens
+            .Where(rt => DateTime.UtcNow < rt.ExpiryDate)
+            .SingleOrDefault(rt => rt.Token == refreshTokenKey);
 }
