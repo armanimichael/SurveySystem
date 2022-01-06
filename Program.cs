@@ -15,21 +15,20 @@ using SurveySystem.Services.UserService;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-if (builder.Environment.IsDevelopment())
+// CORS
+var allowedOrigins = builder.Configuration.GetValue<string>("CORS:Origins").Split(',');
+builder.Services.AddCors(options =>
 {
-    builder.Services.AddCors(options =>
-    {
-        options.AddDefaultPolicy(
-            policyBuilder =>
-            {
-                policyBuilder
-                    .AllowAnyOrigin()
-                    .AllowAnyMethod()
-                    .AllowAnyHeader();
-            });
-    });
-}
-
+    options.AddDefaultPolicy(
+        policyBuilder =>
+        {
+            policyBuilder
+                .WithOrigins(allowedOrigins)
+                .AllowCredentials()
+                .AllowAnyMethod()
+                .AllowAnyHeader();
+        });
+});
 
 // Logging
 builder.Logging.ClearProviders();
@@ -139,6 +138,14 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+// Cookies Policies
+app.UseCookiePolicy(new CookiePolicyOptions
+{
+    HttpOnly = Microsoft.AspNetCore.CookiePolicy.HttpOnlyPolicy.Always,
+    Secure = CookieSecurePolicy.Always,
+    MinimumSameSitePolicy = SameSiteMode.None
+});
 
 app.UseCors();
 
