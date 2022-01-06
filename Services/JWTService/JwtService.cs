@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using SurveySystem.Data;
 using SurveySystem.Dtos;
@@ -13,24 +14,34 @@ namespace SurveySystem.Services.JWTService;
 public class JwtService : IJwtService
 {
     private readonly ApplicationDbContext _dbContext;
+    private readonly UserManager<IdentityUser> _userManager;
     private readonly string _secretKey;
+    private readonly string _issuer;
+    private readonly string _audience;
+    
 
-    public JwtService(IConfiguration configuration, ApplicationDbContext dbContext)
+    public JwtService(IConfiguration configuration, ApplicationDbContext dbContext, UserManager<IdentityUser> userManager)
     {
         _dbContext = dbContext;
+        _userManager = userManager;
         _secretKey = configuration["JWT:SecretKey"];
+        _issuer = configuration["JWT:ValidIssuer"];
+        _audience = configuration["JWT:ValidAudience"];
     }
 
     public async Task<AuthResult> GenerateJwtToken(IdentityUser user)
     {
-        var jwtTokenHandler = new JwtSecurityTokenHandler();
-        var tokenDescriptor = CreateTokenDescriptor(user);
+        var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secretKey));
+        var token = new JwtSecurityToken(
+            issuer: _issuer,
+            audience: _audience,
+            expires: DateTime.UtcNow.AddDays(1),
+            claims: await CreateUserClaims(user),
+            signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
+        );
 
-        var token = jwtTokenHandler.CreateToken(tokenDescriptor);
-        var jwtToken = jwtTokenHandler.WriteToken(token);
-
+        string jwtToken = new JwtSecurityTokenHandler().WriteToken(token);
         RefreshToken refreshToken = await CreateRefreshToken(user.Id);
-
         return new AuthResult(jwtToken, refreshToken.Token, refreshToken.ExpiryDate);
     }
 
@@ -56,26 +67,21 @@ public class JwtService : IJwtService
         return token;
     }
 
-    private SecurityTokenDescriptor CreateTokenDescriptor(IdentityUser user)
+    private async Task<List<Claim>> CreateUserClaims(IdentityUser user)
     {
-        var key = Encoding.ASCII.GetBytes(_secretKey);
-        return new SecurityTokenDescriptor
+        IList<string>? userRoles = await _userManager.GetRolesAsync(user);
+        var authClaims = new List<Claim>
         {
-            Subject = new ClaimsIdentity(new[]
-            {
-                new Claim("Id", user.Id),
-                new Claim(JwtRegisteredClaimNames.Email, user.Email),
-                new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-            }),
-            Expires = DateTime.UtcNow.AddSeconds(30),
-            SigningCredentials =
-                new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            new(ClaimTypes.Name, user.UserName),
+            new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
         };
+        authClaims.AddRange(userRoles.Select(userRole => new Claim(ClaimTypes.Role, userRole)));
+        return authClaims;
     }
 
     public async Task<RefreshToken?> GetRefreshToken(string refreshTokenKey) =>
-        _dbContext.RefreshTokens
+        await _dbContext.RefreshTokens
+            .Include(rt => rt.User)
             .Where(rt => DateTime.UtcNow < rt.ExpiryDate)
-            .SingleOrDefault(rt => rt.Token == refreshTokenKey);
+            .SingleOrDefaultAsync(rt => rt.Token == refreshTokenKey);
 }
