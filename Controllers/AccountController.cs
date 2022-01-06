@@ -56,7 +56,7 @@ public class AccountController : ControllerBase
 
             if (response.Success)
             {
-                CreateRefreshTokenCookie((AuthResult)response.MetaData);
+                CreateRefreshTokenCookie((response.MetaData as AuthResult)!);
             }
         }
         catch (Exception e)
@@ -70,10 +70,10 @@ public class AccountController : ControllerBase
 
     private void CreateRefreshTokenCookie(AuthResult authResult)
     {
-        var (_, refreshToken, expire) = authResult;
+        var (_, _, refreshToken, refreshTokenExpire) = authResult;
         Response.Cookies.Append("refreshToken", refreshToken, new CookieOptions()
         {
-            Expires = expire
+            Expires = refreshTokenExpire
         });
     }
 

@@ -4,6 +4,7 @@ namespace SurveySystem.Dtos;
 
 public record AuthResult(
     string Token,
+    DateTime Expiration,
     [property: JsonIgnore] string RefreshToken,
-    [property: JsonIgnore] DateTime refreshExpire
+    [property: JsonIgnore] DateTime RefreshExpire
 );

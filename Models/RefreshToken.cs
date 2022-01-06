@@ -11,7 +11,7 @@ public class RefreshToken
     
     public DateTime ExpiryDate { get; set; }
     public string UserId { get; set; } = null!;
-    
+
     [ForeignKey(nameof(UserId))]
-    public IdentityUser User { get; set; }
+    public IdentityUser User { get; set; } = null!;
 }

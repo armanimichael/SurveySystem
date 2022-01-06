@@ -32,17 +32,19 @@ public class JwtService : IJwtService
     public async Task<AuthResult> GenerateJwtToken(IdentityUser user)
     {
         var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secretKey));
+        var expire = DateTime.UtcNow.AddDays(1);
+        
         var token = new JwtSecurityToken(
             issuer: _issuer,
             audience: _audience,
-            expires: DateTime.UtcNow.AddDays(1),
+            expires: expire,
             claims: await CreateUserClaims(user),
             signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
         );
 
         string jwtToken = new JwtSecurityTokenHandler().WriteToken(token);
         RefreshToken refreshToken = await CreateRefreshToken(user.Id);
-        return new AuthResult(jwtToken, refreshToken.Token, refreshToken.ExpiryDate);
+        return new AuthResult(jwtToken, expire, refreshToken.Token, refreshToken.ExpiryDate);
     }
 
     private async Task<RefreshToken> CreateRefreshToken(string userId)
