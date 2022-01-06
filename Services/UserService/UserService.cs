@@ -124,7 +124,7 @@ public class UserService : IUserService
         return (user)?.Id ?? null;
     }
     
-    private async Task<IdentityUser?> GetCurrentUser()
+    public async Task<IdentityUser?> GetCurrentUser()
     {
         string username = _httpContextAccessor.HttpContext!.User.Identity?.Name ?? string.Empty;
         return await _userManager.FindByNameAsync(username);
