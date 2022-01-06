@@ -101,7 +101,7 @@ public class AccountController : ControllerBase
     [AllowAnonymous]
     public async Task<IActionResult> RefreshToken()
     {
-        string? refreshToken = Request.Cookies.SingleOrDefault(c => c.Key == "refreshTokend").Value;
+        string? refreshToken = Request.Cookies.SingleOrDefault(c => c.Key == "refreshToken").Value;
         if (refreshToken == null) return Unauthorized();
 
         RefreshToken? refreshTokenInDb = await _jwtService.GetRefreshToken(refreshToken);
