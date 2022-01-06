@@ -2,4 +2,8 @@
 
 namespace SurveySystem.Dtos;
 
-public record AuthResult(string Token, [property: JsonIgnore] string RefreshToken);
+public record AuthResult(
+    string Token,
+    [property: JsonIgnore] string RefreshToken,
+    [property: JsonIgnore] DateTime refreshExpire
+);

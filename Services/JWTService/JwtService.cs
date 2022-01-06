@@ -33,7 +33,7 @@ public class JwtService : IJwtService
 
         RefreshToken refreshToken = await CreateRefreshToken(user, token);
 
-        return new AuthResult(jwtToken, refreshToken.Token);
+        return new AuthResult(jwtToken, refreshToken.Token, refreshToken.ExpiryDate);
     }
 
     private async Task<RefreshToken> CreateRefreshToken(IdentityUser user, SecurityToken token)
