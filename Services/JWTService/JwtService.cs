@@ -14,13 +14,10 @@ public class JwtService : IJwtService
 {
     private readonly ApplicationDbContext _dbContext;
     private readonly string _secretKey;
-    private readonly TokenValidationParameters _tokenValidationParameters;
 
-    public JwtService(IConfiguration configuration, ApplicationDbContext dbContext,
-        TokenValidationParameters tokenValidationParameters)
+    public JwtService(IConfiguration configuration, ApplicationDbContext dbContext)
     {
         _dbContext = dbContext;
-        _tokenValidationParameters = tokenValidationParameters;
         _secretKey = configuration["JWT:SecretKey"];
     }
 
