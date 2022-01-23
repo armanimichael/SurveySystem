@@ -7,17 +7,14 @@ namespace SurveySystem.Services.MailService;
 
 public class MailService : IMailService
 {
-    private readonly IHttpContextAccessor _httpContextAccessor;
-    private readonly LinkGenerator _linkGenerator;
+    private readonly IConfiguration _configuration;
     private readonly MailSenderConfiguration _senderConfiguration;
     private readonly string _from;
     private readonly string _fromName;
 
-    public MailService(IConfiguration configuration, LinkGenerator linkGenerator,
-        IHttpContextAccessor httpContextAccessor)
+    public MailService(IConfiguration configuration)
     {
-        _linkGenerator = linkGenerator;
-        _httpContextAccessor = httpContextAccessor;
+        _configuration = configuration;
         _from = configuration["Email:From"];
         _fromName = configuration["Email:FromName"];
 
@@ -43,8 +40,10 @@ public class MailService : IMailService
         token = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
         userId = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(userId));
 
-        HttpContext context = _httpContextAccessor.HttpContext!;
-        return _linkGenerator.GetUriByAction(context, "Verify", "Account", new { token, userId })!;
+        string webAppHost = _configuration["WebAppHost"];
+        string webAppPath = "/account/login";
+        string queryParams = $"?token={token}&userId={userId}";
+        return webAppHost + webAppPath + queryParams;
     }
 
     private string CreateEmailVerificationBody(string userId, string token)
