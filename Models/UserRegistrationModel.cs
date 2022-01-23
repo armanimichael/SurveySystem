@@ -6,6 +6,7 @@ public class UserRegistrationModel
 {
     [Key]
     [Required(ErrorMessage = "Username is required")]
+    [MinLength(5, ErrorMessage = "Username cannot be less than 5 charaters long")]
     [MaxLength(50, ErrorMessage = "Username cannot be more than 50 characters long")]
     public string Username { get; set; } = null!;
 
