@@ -25,18 +25,8 @@ public class SurveyController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> Get()
     {
-        ApiResponse response;
-
-        try
-        {
-            IList<Survey> survey = await _surveyService.Get();
-            response = new ApiResponse(true, survey, (int)HttpStatusCode.OK);
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(e, "There was an error getting the Surveys");
-            response = SurveyApiReponses.GetError;
-        }
+        IList<Survey> survey = await _surveyService.Get();
+        ApiResponse response = new ApiResponse(true, survey, (int)HttpStatusCode.OK);
 
         return this.CustomApiResponse(response);
     }
@@ -44,20 +34,11 @@ public class SurveyController : ControllerBase
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> Get(Guid id)
     {
-        ApiResponse response;
+        Survey? survey = await _surveyService.Get(id);
 
-        try
-        {
-            Survey? survey = await _surveyService.Get(id);
-            response = survey == null
-                ? SurveyApiReponses.NotFound
-                : new ApiResponse(true, survey, (int)HttpStatusCode.OK);
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(e, "There was an error getting the Survey with ID = {Id}", id);
-            response = SurveyApiReponses.GetError;
-        }
+        ApiResponse response = survey == null
+            ? SurveyApiReponses.NotFound
+            : new ApiResponse(true, survey, (int)HttpStatusCode.OK);
 
         return this.CustomApiResponse(response);
     }
@@ -66,20 +47,12 @@ public class SurveyController : ControllerBase
     [Authorize]
     public async Task<IActionResult> Create(SurveyDto survey)
     {
-        ApiResponse response;
-        try
-        {
-            var newSurvey = new Survey(survey.Name, survey.Description, survey.IsVisible);
-            Survey? surveyInDb = await _surveyService.Create(newSurvey);
-            response = surveyInDb == null
-                ? SurveyApiReponses.NotUnique
-                : new ApiResponse(true, surveyInDb, (int)HttpStatusCode.Created);
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(e, "There was an error creating the Survey");
-            response = SurveyApiReponses.GetError;
-        }
+        var newSurvey = new Survey(survey.Name, survey.Description, survey.IsVisible);
+        Survey? surveyInDb = await _surveyService.Create(newSurvey);
+
+        ApiResponse response = surveyInDb == null
+            ? SurveyApiReponses.NotUnique
+            : new ApiResponse(true, surveyInDb, (int)HttpStatusCode.Created);
 
         return this.CustomApiResponse(response);
     }
@@ -88,17 +61,8 @@ public class SurveyController : ControllerBase
     [Authorize]
     public async Task<IActionResult> Update(Guid id, SurveyDto survey)
     {
-        ApiResponse response;
-        try
-        {
-            var newSurvey = new Survey(id, survey.Name, survey.Description, survey.IsVisible);
-            response = await _surveyService.Update(newSurvey);
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(e, "There was an error updating the Survey width ID = {Id}", id);
-            response = SurveyApiReponses.UpdateError;
-        }
+        var newSurvey = new Survey(id, survey.Name, survey.Description, survey.IsVisible);
+        ApiResponse response = await _surveyService.Update(newSurvey);
 
         return this.CustomApiResponse(response);
     }
@@ -107,16 +71,7 @@ public class SurveyController : ControllerBase
     [Authorize]
     public async Task<IActionResult> Delete(Guid id)
     {
-        ApiResponse response;
-        try
-        {
-            response = await _surveyService.Delete(id);
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(e, "There was an error deleting the Survey width ID = {Id}", id);
-            response = SurveyApiReponses.DeleteError;
-        }
+        ApiResponse response = await _surveyService.Delete(id);
 
         return this.CustomApiResponse(response);
     }
