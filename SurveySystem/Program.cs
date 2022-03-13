@@ -32,7 +32,7 @@ builder.Services.AddCors(options =>
 
 // Logging
 builder.Logging.ClearProviders();
-builder.Logging.AddConsole();
+builder.Logging.AddSimpleConsole(opts => opts.IncludeScopes = true);
 
 // Add services to the container.
 builder.Services.AddScoped<IJwtService, JwtService>();
@@ -126,7 +126,6 @@ builder.Services.AddAuthentication(options =>
         };
     });
 
-
 WebApplication app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -147,6 +146,8 @@ app.UseCookiePolicy(new CookiePolicyOptions
 app.UseCors();
 
 app.UseHttpsRedirection();
+
+app.UseExceptionHandler("/error");
 
 app.UseAuthentication();
 app.UseAuthorization();
