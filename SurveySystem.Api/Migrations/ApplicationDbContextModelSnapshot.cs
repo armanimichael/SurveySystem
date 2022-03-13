@@ -220,7 +220,7 @@ namespace SurveySystem.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("SurveySystem.Models.RefreshToken", b =>
+            modelBuilder.Entity("SurveySystem.Api.Models.RefreshToken", b =>
                 {
                     b.Property<string>("Token")
                         .HasColumnType("nvarchar(450)");
@@ -239,7 +239,7 @@ namespace SurveySystem.Migrations
                     b.ToTable("RefreshTokens");
                 });
 
-            modelBuilder.Entity("SurveySystem.Models.Survey", b =>
+            modelBuilder.Entity("SurveySystem.Api.Models.Survey", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -321,7 +321,7 @@ namespace SurveySystem.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("SurveySystem.Models.RefreshToken", b =>
+            modelBuilder.Entity("SurveySystem.Api.Models.RefreshToken", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "User")
                         .WithMany()

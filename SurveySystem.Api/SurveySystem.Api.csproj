@@ -5,6 +5,7 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
       <UserSecretsId>e960afe6-be2c-4675-b14d-ef860923c8bc</UserSecretsId>
+      <RootNamespace>SurveySystem</RootNamespace>
   </PropertyGroup>
 
     <ItemGroup>

@@ -12,8 +12,8 @@ using SurveySystem.Data;
 namespace SurveySystem.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220106163804_remove-refresh-token-props")]
-    partial class removerefreshtokenprops
+    [Migration("20220104155722_add-refresh-token")]
+    partial class addrefreshtoken
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -222,13 +222,26 @@ namespace SurveySystem.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("SurveySystem.Models.RefreshToken", b =>
+            modelBuilder.Entity("SurveySystem.Api.Models.RefreshToken", b =>
                 {
                     b.Property<string>("Token")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<DateTime>("AddedDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTime>("ExpiryDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsRevoked")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsUsed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("JwtId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserId")
                         .IsRequired()
@@ -241,7 +254,7 @@ namespace SurveySystem.Migrations
                     b.ToTable("RefreshTokens");
                 });
 
-            modelBuilder.Entity("SurveySystem.Models.Survey", b =>
+            modelBuilder.Entity("SurveySystem.Api.Models.Survey", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -323,7 +336,7 @@ namespace SurveySystem.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("SurveySystem.Models.RefreshToken", b =>
+            modelBuilder.Entity("SurveySystem.Api.Models.RefreshToken", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "User")
                         .WithMany()
