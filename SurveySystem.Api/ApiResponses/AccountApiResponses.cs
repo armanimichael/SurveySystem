@@ -1,6 +1,6 @@
 ﻿using System.Net;
 using Microsoft.AspNetCore.Identity;
-using SurveySystem.Models;
+using SurveySystem.Data.Models;
 
 namespace SurveySystem.ApiResponses;
 

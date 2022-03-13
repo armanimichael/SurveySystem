@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace SurveySystem.Dtos;
+namespace SurveySystem.Data.Models.Dtos;
 
 public record AuthResult(
     string Token,

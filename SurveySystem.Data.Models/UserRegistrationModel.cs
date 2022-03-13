@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace SurveySystem.Models;
+namespace SurveySystem.Data.Models;
 
 public class UserRegistrationModel
 {

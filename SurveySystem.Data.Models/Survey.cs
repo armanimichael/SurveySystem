@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using SurveySystem.Dtos;
+using SurveySystem.Data.Models.Dtos;
 
-namespace SurveySystem.Models;
+namespace SurveySystem.Data.Models;
 
 public class Survey : SurveyDto
 {

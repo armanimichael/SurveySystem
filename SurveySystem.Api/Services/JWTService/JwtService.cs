@@ -6,8 +6,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using SurveySystem.Data;
-using SurveySystem.Dtos;
-using SurveySystem.Models;
+using SurveySystem.Data.Models;
+using SurveySystem.Data.Models.Dtos;
 
 namespace SurveySystem.Services.JWTService;
 

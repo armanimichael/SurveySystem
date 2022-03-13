@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace SurveySystem.Dtos;
+namespace SurveySystem.Data.Models.Dtos;
 
 [Serializable]
 public class SurveyDto

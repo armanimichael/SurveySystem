@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.AspNetCore.Identity;
 
-namespace SurveySystem.Models;
+namespace SurveySystem.Data.Models;
 
 public class RefreshToken
 {

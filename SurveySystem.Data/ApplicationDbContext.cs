@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using SurveySystem.Models;
+using SurveySystem.Data.Models;
 
 namespace SurveySystem.Data;
 

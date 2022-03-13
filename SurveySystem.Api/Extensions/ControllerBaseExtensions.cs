@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using SurveySystem.Models;
+using SurveySystem.Data.Models;
 
 namespace SurveySystem.Extensions;
 

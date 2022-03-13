@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using SurveySystem.ApiResponses;
-using SurveySystem.Dtos;
-using SurveySystem.Models;
+using SurveySystem.Data.Models;
+using SurveySystem.Data.Models.Dtos;
 using SurveySystem.Services.JWTService;
 using SurveySystem.Services.MailService;
 

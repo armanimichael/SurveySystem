@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace SurveySystem.Models;
+namespace SurveySystem.Data.Models;
 
 public class ApiResponse
 {

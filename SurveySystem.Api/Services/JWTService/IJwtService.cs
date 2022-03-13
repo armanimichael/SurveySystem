@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using SurveySystem.Dtos;
-using SurveySystem.Models;
+using SurveySystem.Data.Models;
+using SurveySystem.Data.Models.Dtos;
 
 namespace SurveySystem.Services.JWTService;
 

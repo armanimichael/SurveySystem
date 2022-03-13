@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using SurveySystem.Data;
-using SurveySystem.Models;
+using SurveySystem.Data.Models;
 using SurveySystem.Services.JWTService;
 using SurveySystem.Services.MailService;
 using SurveySystem.Services.SurveyService;

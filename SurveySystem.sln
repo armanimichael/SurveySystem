@@ -2,6 +2,10 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SurveySystem.Api", "SurveySystem.Api\SurveySystem.Api.csproj", "{2C8829B5-C5D4-4D0B-8754-A9D57B391A32}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SurveySystem.Data", "SurveySystem.Data\SurveySystem.Data.csproj", "{1B1A7EFF-EB9B-43DB-A08D-61B05F0E32A6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SurveySystem.Data.Models", "SurveySystem.Data.Models\SurveySystem.Data.Models.csproj", "{01E654F4-33AF-4ADA-AE8A-2095266671B9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +16,13 @@ Global
 		{2C8829B5-C5D4-4D0B-8754-A9D57B391A32}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2C8829B5-C5D4-4D0B-8754-A9D57B391A32}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2C8829B5-C5D4-4D0B-8754-A9D57B391A32}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1B1A7EFF-EB9B-43DB-A08D-61B05F0E32A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1B1A7EFF-EB9B-43DB-A08D-61B05F0E32A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1B1A7EFF-EB9B-43DB-A08D-61B05F0E32A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1B1A7EFF-EB9B-43DB-A08D-61B05F0E32A6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{01E654F4-33AF-4ADA-AE8A-2095266671B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{01E654F4-33AF-4ADA-AE8A-2095266671B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{01E654F4-33AF-4ADA-AE8A-2095266671B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{01E654F4-33AF-4ADA-AE8A-2095266671B9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

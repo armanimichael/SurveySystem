@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SurveySystem.ApiResponses;
 using SurveySystem.Data;
-using SurveySystem.Models;
+using SurveySystem.Data.Models;
 using SurveySystem.Services.UserService;
 
 namespace SurveySystem.Services.SurveyService;

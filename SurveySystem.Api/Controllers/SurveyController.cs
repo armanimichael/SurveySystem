@@ -2,9 +2,9 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SurveySystem.ApiResponses;
-using SurveySystem.Dtos;
+using SurveySystem.Data.Models;
+using SurveySystem.Data.Models.Dtos;
 using SurveySystem.Extensions;
-using SurveySystem.Models;
 using SurveySystem.Services.SurveyService;
 
 namespace SurveySystem.Controllers;

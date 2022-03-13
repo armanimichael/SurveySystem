@@ -1,4 +1,4 @@
-﻿using SurveySystem.Models;
+﻿using SurveySystem.Data.Models;
 
 namespace SurveySystem.Services;
 
